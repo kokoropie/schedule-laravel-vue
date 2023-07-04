@@ -79,8 +79,8 @@ const paddingNumber = (num = 0, length = 1) => {
                             <th class="px-6 py-3 border border-black whitespace-nowrap group relative bg-white">
                                 {{ nameOfDate[date].date }}
                                 <div class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 left-1/2 -bottom-2 -translate-x-1/2 translate-y-full before:content-[''] before:absolute before:left-1/2 before:bottom-full before:-translate-x-1/2 before:border-8 before:border-x-transparent before:border-t-transparent before:border-b-gray-900 group-hover:opacity-100 group-hover:visible">
-                                        {{ nameOfDate[date].title }}
-                                    </div>
+                                    {{ nameOfDate[date].title }}
+                                </div>
                             </th>
                             <template v-for="n in 7" :key="n">
                                 <th v-if="n > date + 1" class="px-6 py-3 border border-black whitespace-nowrap group relative bg-white">
@@ -110,14 +110,15 @@ const paddingNumber = (num = 0, length = 1) => {
                                     {{ schedules[m - 1][n].label }}
                                     <span v-if="schedules[m - 1][n].onl" class="text-xs">(ONL)</span>
                                     <template v-if="schedules[m - 1][n].title.length > 0">
-                                        <div v-if="m == 1" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 -right-2 top-1/2 translate-x-full -translate-y-1/2 before:content-[''] before:absolute before:top-1/2  before:right-full before:-translate-y-1/2 before:border-8 before:border-y-transparent before:border-l-transparent before:border-r-gray-900 group-hover:opacity-100 group-hover:visible">
+                                        <div class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 group-hover:visible" :class="{
+                                            'left-1/2 -bottom-2 -translate-x-1/2 translate-y-full before:content-[\'\'] before:absolute before:left-1/2 before:bottom-full before:-translate-x-1/2 before:border-8 before:border-x-transparent before:border-t-transparent before:border-b-gray-900': m != 1 && m != 7 && n == 1,
+                                            '-left-2 top-1/2 -translate-x-full -translate-y-1/2 after:content-[\'\'] after:absolute after:top-1/2  after:left-full after:-translate-y-1/2 after:border-8 after:border-y-transparent after:border-r-transparent after:border-l-gray-900': m == 7,
+                                            '-right-2 top-1/2 translate-x-full -translate-y-1/2 before:content-[\'\'] before:absolute before:top-1/2  before:right-full before:-translate-y-1/2 before:border-8 before:border-y-transparent before:border-l-transparent before:border-r-gray-900': m == 1,
+                                            'left-1/2 -top-2 -translate-x-1/2 -translate-y-full after:content-[\'\'] after:absolute after:left-1/2 after:top-full after:-translate-x-1/2 after:border-8 after:border-x-transparent after:border-b-transparent after:border-t-gray-900': m != 1 && m != 7 && n != 1
+                                        }">
                                             {{ schedules[m - 1][n].title }}
-                                        </div>
-                                        <div v-else-if="m == 7" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 -left-2 top-1/2 -translate-x-full -translate-y-1/2 after:content-[''] after:absolute after:top-1/2  after:left-full after:-translate-y-1/2 after:border-8 after:border-y-transparent after:border-r-transparent after:border-l-gray-900 group-hover:opacity-100 group-hover:visible">
-                                            {{ schedules[m - 1][n].title }}
-                                        </div>
-                                        <div v-else class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 left-1/2 -top-2 -translate-x-1/2 -translate-y-full after:content-[''] after:absolute after:left-1/2 after:top-full after:-translate-x-1/2 after:border-8 after:border-x-transparent after:border-b-transparent after:border-t-gray-900 group-hover:opacity-100 group-hover:visible">
-                                            {{ schedules[m - 1][n].title }}
+                                            <br />
+                                            - {{ schedules[m - 1][n].teacher }} -
                                         </div>
                                     </template>
                                 </td>

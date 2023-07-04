@@ -50,7 +50,8 @@ class HomeController extends Controller
                     "label" => "",
                     "title" => "",
                     "rowspan" => 1,
-                    "onl" => false
+                    "onl" => false,
+                    "teacher" => "",
                 ];
                 foreach ($tmp as $schedule) {
                     if ($schedule->dateOfWeek - 1 == $date && $schedule->start == $i) {
@@ -59,6 +60,7 @@ class HomeController extends Controller
                             "title" => $schedule->subject->name,
                             "rowspan" => $schedule->end - $schedule->start + 1,
                             "onl" => $schedule->type === "ONLINE",
+                            "teacher" => $schedule->subject->teacher->name,
                         ]; 
                         $i = $schedule->end;
                         break;
