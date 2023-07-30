@@ -3,6 +3,8 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
+import { ref } from 'vue';
+import XLSX from 'xlsx';
 
 defineProps({
     canLogin: {
@@ -57,6 +59,15 @@ const paddingNumber = (num = 0, length = 1) => {
     return `${num}`;
 }
 
+const scheduleTable = ref(null)
+
+const htmlTableToExcel = (type) => {
+    var data = scheduleTable.value;
+    var excelFile = XLSX.utils.table_to_book(data, {sheet: "sheet1"});
+    XLSX.write(excelFile, { bookType: type, bookSST: true, type: 'base64' });
+    XLSX.writeFile(excelFile, (new Date().getFullYear() + "" + paddingNumber(new Date().getMonth() + 1, 2) + "" + paddingNumber(new Date().getDate(), 2) + "" + paddingNumber(new Date().getHours(), 2) + "" + paddingNumber(new Date().getMinutes(), 2) + "" + paddingNumber(new Date().getSeconds(), 2)) + '.' + type);
+}
+
 </script>
 
 <template>
@@ -67,32 +78,33 @@ const paddingNumber = (num = 0, length = 1) => {
         </template>
         <div class="py-12">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-                <div class="flex justify-center items-center space-x-3">
+                <div class="flex flex-col xs:flex-row relative justify-center items-center space-y-2 xs:space-y-0 xs:space-x-3 text-center">
                     <Link :href="route('home', prev_day)"><PrimaryButton>Prev</PrimaryButton></Link>
                     <TextInput :value="day" type="date" @change="event => router.visit(route('home', event.target.value))" />
                     <Link :href="route('home', next_day)"><PrimaryButton>Next</PrimaryButton></Link>
+                    <PrimaryButton class="sm:absolute right-0" @click="htmlTableToExcel('xlsx')">Export</PrimaryButton>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full">
+                <div class="overflow-x-auto overflow-y-hidden">
+                    <table class="w-full" ref="scheduleTable">
                         <tr>
                             <th class="px-6 py-3"></th>
                             <th class="px-6 py-3 border border-black whitespace-nowrap group relative bg-white">
                                 {{ nameOfDate[date].date }}
-                                <div class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 left-1/2 -bottom-2 -translate-x-1/2 translate-y-full before:content-[''] before:absolute before:left-1/2 before:bottom-full before:-translate-x-1/2 before:border-8 before:border-x-transparent before:border-t-transparent before:border-b-gray-900 group-hover:opacity-100 group-hover:visible">
+                                <div class="absolute z-10 invisible hidden px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 left-1/2 -bottom-2 -translate-x-1/2 translate-y-full before:content-[''] before:absolute before:left-1/2 before:bottom-full before:-translate-x-1/2 before:border-8 before:border-x-transparent before:border-t-transparent before:border-b-gray-900 group-hover:opacity-100 group-hover:visible group-hover:inline-block">
                                     {{ nameOfDate[date].title }}
                                 </div>
                             </th>
                             <template v-for="n in 7" :key="n">
                                 <th v-if="n > date + 1" class="px-6 py-3 border border-black whitespace-nowrap group relative bg-white">
                                     {{ nameOfDate[n - 1].date }}
-                                    <div class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 left-1/2 -bottom-2 -translate-x-1/2 translate-y-full before:content-[''] before:absolute before:left-1/2 before:bottom-full before:-translate-x-1/2 before:border-8 before:border-x-transparent before:border-t-transparent before:border-b-gray-900 group-hover:opacity-100 group-hover:visible">
+                                    <div class="absolute z-10 invisible hidden px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 left-1/2 -bottom-2 -translate-x-1/2 translate-y-full before:content-[''] before:absolute before:left-1/2 before:bottom-full before:-translate-x-1/2 before:border-8 before:border-x-transparent before:border-t-transparent before:border-b-gray-900 group-hover:opacity-100 group-hover:visible group-hover:inline-block">
                                         {{ nameOfDate[n - 1].title }}
                                     </div>
                                 </th>
                             </template>
                             <th v-for="n in date" :key="n" class="px-6 py-3 border border-black whitespace-nowrap group relative bg-white">
                                 {{ nameOfDate[n - 1].date }}
-                                <div class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 left-1/2 -bottom-2 -translate-x-1/2 translate-y-full before:content-[''] before:absolute before:left-1/2 before:bottom-full before:-translate-x-1/2 before:border-8 before:border-x-transparent before:border-t-transparent before:border-b-gray-900 group-hover:opacity-100 group-hover:visible">
+                                <div class="absolute z-10 invisible hidden px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 left-1/2 -bottom-2 -translate-x-1/2 translate-y-full before:content-[''] before:absolute before:left-1/2 before:bottom-full before:-translate-x-1/2 before:border-8 before:border-x-transparent before:border-t-transparent before:border-b-gray-900 group-hover:opacity-100 group-hover:visible group-hover:inline-block">
                                     {{ nameOfDate[n - 1].title }}
                                 </div>
                             </th>
@@ -100,7 +112,7 @@ const paddingNumber = (num = 0, length = 1) => {
                         <tr v-for="n in maxADay" class="bg-white">
                             <th class="px-6 py-3 border border-black whitespace-nowrap group relative">
                                 {{ n }}
-                                <div class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 -right-2 top-1/2 translate-x-full -translate-y-1/2 before:content-[''] before:absolute before:top-1/2  before:right-full before:-translate-y-1/2 before:border-8 before:border-y-transparent before:border-l-transparent before:border-r-gray-900 group-hover:opacity-100 group-hover:visible">
+                                <div class="absolute z-10 invisible hidden px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 -right-2 top-1/2 translate-x-full -translate-y-1/2 before:content-[''] before:absolute before:top-1/2  before:right-full before:-translate-y-1/2 before:border-8 before:border-y-transparent before:border-l-transparent before:border-r-gray-900 group-hover:opacity-100 group-hover:visible group-hover:inline-block">
                                     {{ paddingNumber(timeOfEachClassPeriod[n].start[0], 2) }}:{{ paddingNumber(timeOfEachClassPeriod[n].start[1], 2) }} - {{ paddingNumber(timeOfEachClassPeriod[n].end[0], 2) }}:{{ paddingNumber(timeOfEachClassPeriod[n].end[1], 2) }}
                                 </div>
                             </th>
@@ -111,10 +123,7 @@ const paddingNumber = (num = 0, length = 1) => {
                                     {{ schedules[m - 1][n].label }}
                                     <span v-if="schedules[m - 1][n].onl" class="text-xs">(ONL)</span>
                                     <template v-if="schedules[m - 1][n].title.length > 0">
-                                        <!-- {{ console.log(m, schedules[m - 1][n].rowspan, n, "bottom", m != 1 && m != 7 && n == 1 && schedules[m - 1][n].rowspan + n - 1 != maxADay) }}
-                                        {{ console.log(m, schedules[m - 1][n].rowspan, n, "top", m != 1 && m != 7 && n != 1) }}
-                                        {{ console.log(m, schedules[m - 1][n].rowspan, n, "top-bottom", m != 1 && m != 7 && n == 1 && schedules[m - 1][n].rowspan + n - 1 == maxADay) }} -->
-                                        <div class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 group-hover:visible" :class="{
+                                        <div class="absolute z-10 invisible hidden px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 group-hover:visible group-hover:inline-block" :class="{
                                             'left-1/2 -bottom-2 -translate-x-1/2 translate-y-full before:content-[\'\'] before:absolute before:left-1/2 before:bottom-full before:-translate-x-1/2 before:border-8 before:border-x-transparent before:border-t-transparent before:border-b-gray-900': m != 1 && m != 7 && n == 1 && schedules[m - 1][n].rowspan + n - 1 != maxADay, // bottom
                                             '-left-2 top-1/2 -translate-x-full -translate-y-1/2 after:content-[\'\'] after:absolute after:top-1/2  after:left-full after:-translate-y-1/2 after:border-8 after:border-y-transparent after:border-r-transparent after:border-l-gray-900': m == 7, // left
                                             '-right-2 top-1/2 translate-x-full -translate-y-1/2 before:content-[\'\'] before:absolute before:top-1/2  before:right-full before:-translate-y-1/2 before:border-8 before:border-y-transparent before:border-l-transparent before:border-r-gray-900': m == 1, // right
