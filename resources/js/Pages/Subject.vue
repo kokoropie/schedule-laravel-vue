@@ -25,6 +25,8 @@ const formNew = useForm({
     subject_id: '',
     name: '',
     credits: 1,
+    color_foreground: '#000000',
+    color_background: '#ffffff',
     teacher_id: ''
 });
 const isShowModalNew = ref(false);
@@ -49,6 +51,8 @@ const formEdit = useForm({
     subject_id: '',
     name: '',
     credits: 1,
+    color_foreground: '#000000',
+    color_background: '#ffffff',
     teacher_id: ''
 });
 const isShowModalEdit = ref(false);
@@ -59,6 +63,8 @@ const showModalEdit = (subject) => {
     formEdit.subject_id = subject.subject_id;
     formEdit.name = subject.name;
     formEdit.credits = subject.credits;
+    formEdit.color_foreground = subject.color_foreground;
+    formEdit.color_background = subject.color_background;
     formEdit.teacher_id = subject.teacher_id;
     isShowModalEdit.value = true;
 }
@@ -119,7 +125,10 @@ const submitDelete = () => {
                         </thead>
                         <tbody>
                             <tr v-for="subject in subjects" class="even:bg-gray-300 hover:bg-gray-500 hover:text-white">
-                                <td class="px-3 py-3 whitespace-nowrap text-center w-auto">{{ subject.subject_id }}</td>
+                                <td class="px-3 py-3 whitespace-nowrap text-center w-auto" :style="{
+                                    color: subject.color_foreground,
+                                    background: subject.color_background
+                                }">{{ subject.subject_id }}</td>
                                 <td class="px-3 md:px-6 py-3 whitespace-nowrap w-full">{{ subject.name }}</td>
                                 <td class="px-3 md:px-6 py-3 whitespace-nowrap w-auto">{{ subject.teacher.name }}</td>
                                 <td class="px-3 md:px-6 py-3 whitespace-nowrap text-right w-auto">{{ subject.credits }}</td>
@@ -186,6 +195,40 @@ const submitDelete = () => {
                         />
                         <InputError class="mt-2" :message="formNew.errors.credits" />
                     </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <InputLabel for="color_foreground" value="Text's color" />
+
+                            <TextInput
+                                id="color_foreground"
+                                type="color"
+                                class="mt-1 block w-full"
+                                v-model="formNew.color_foreground"
+                                required
+                                placeholder="#000000"
+                            />
+                            <InputError class="mt-2" :message="formNew.errors.color_foreground" />
+                        </div>
+                        <div>
+                            <InputLabel for="color_background" value="Background's color" />
+
+                            <TextInput
+                                id="color_background"
+                                type="color"
+                                class="mt-1 block w-full"
+                                v-model="formNew.color_background"
+                                required
+                                placeholder="#ffffff"
+                            />
+                            <InputError class="mt-2" :message="formNew.errors.color_background" />
+                        </div>
+                    </div>
+                    <div>
+                        <InputLabel :value="formNew.subject_id" :style="{
+                            color: formNew.color_foreground,
+                            background: formNew.color_background
+                        }" class="py-3 text-center border border-gray-500" />
+                    </div>
                     <div>
                         <InputLabel for="teacher_id" value="Teacher" />
 
@@ -216,7 +259,7 @@ const submitDelete = () => {
                 </button>
             </div>
             <div class="p-6">
-                <form @submit.prevent="submitEdit" id="form-edit">
+                <form @submit.prevent="submitEdit" id="form-edit" class="space-y-6">
                     <div>
                         <InputLabel for="id" value="ID" />
 
@@ -257,6 +300,40 @@ const submitDelete = () => {
                             placeholder="0"
                         />
                         <InputError class="mt-2" :message="formEdit.errors.credits" />
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <InputLabel for="color_foreground" value="Text's color" />
+
+                            <TextInput
+                                id="color_foreground"
+                                type="color"
+                                class="mt-1 block w-full"
+                                v-model="formEdit.color_foreground"
+                                required
+                                placeholder="#000000"
+                            />
+                            <InputError class="mt-2" :message="formEdit.errors.color_foreground" />
+                        </div>
+                        <div>
+                            <InputLabel for="color_background" value="Background's color" />
+
+                            <TextInput
+                                id="color_background"
+                                type="color"
+                                class="mt-1 block w-full"
+                                v-model="formEdit.color_background"
+                                required
+                                placeholder="#ffffff"
+                            />
+                            <InputError class="mt-2" :message="formEdit.errors.color_background" />
+                        </div>
+                    </div>
+                    <div>
+                        <InputLabel :value="formEdit.subject_id" :style="{
+                            color: formEdit.color_foreground,
+                            background: formEdit.color_background
+                        }" class="py-3 text-center border border-gray-500" />
                     </div>
                     <div>
                         <InputLabel for="teacher_id" value="Teacher" />

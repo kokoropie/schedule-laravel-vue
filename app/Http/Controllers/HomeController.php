@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use Inertia\Inertia;
 use Inertia\Response; 
 use App\Models\Schedule;
-use App\Models\Subject;
 use App\Models\Config;
 
 class HomeController extends Controller
@@ -52,6 +50,10 @@ class HomeController extends Controller
                     "rowspan" => 1,
                     "onl" => false,
                     "teacher" => "",
+                    "style" => [
+                        "color" => "#000000",
+                        "background" => "#ffffff"
+                    ]
                 ];
                 foreach ($tmp as $schedule) {
                     if ($schedule->dateOfWeek - 1 == $date && $schedule->start == $i) {
@@ -61,6 +63,10 @@ class HomeController extends Controller
                             "rowspan" => $schedule->end - $schedule->start + 1,
                             "onl" => $schedule->type === "ONLINE",
                             "teacher" => $schedule->subject->teacher->name,
+                            "style" => [
+                                "color" => $schedule->subject->color_foreground,
+                                "background" => $schedule->subject->color_background
+                            ]
                         ]; 
                         $i = $schedule->end;
                         break;

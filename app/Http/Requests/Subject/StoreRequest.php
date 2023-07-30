@@ -25,7 +25,15 @@ class StoreRequest extends FormRequest
             'subject_id' => 'required|unique:subjects,subject_id',
             'name' => 'required|string',
             'credits' => 'required|numeric|min:1',
-            'teacher_id' => 'required|exists:teachers,teacher_id'
+            'teacher_id' => 'required|exists:teachers,teacher_id',
+            'color_foreground' => [
+                'required',
+                'regex:/^#([a-f0-9]{6}|[a-f0-9]{3})$/i'
+            ],
+            'color_background' => [
+                'required',
+                'regex:/^#([a-f0-9]{6}|[a-f0-9]{3})$/i'
+            ],
         ];
     }
 
@@ -43,7 +51,11 @@ class StoreRequest extends FormRequest
             'name.string' => 'Subject\'s name isn\'t in right format',
             'credits.required' => 'Please input subject\'s credits',
             'credits.numeric' => 'Subject\'s credits must be numeric',
-            'credits.min' => 'Subject\'s credits must be greater than or equal to  :min',
+            'credits.min' => 'Subject\'s credits must be greater than or equal to :min',
+            'color_foreground.required' => 'Please choose color of subject\'s text',
+            'color_foreground.regex' => 'Please choose color of subject\'s text',
+            'color_background.required' => 'Please choose color of subject\'s background',
+            'color_background.regex' => 'Please choose color of subject\'s background',
             'teacher_id.required' => 'Please select teacher',
             'teacher_id.exists' => 'Teacher doesn\'t exist',
         ];

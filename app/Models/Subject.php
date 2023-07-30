@@ -13,7 +13,7 @@ class Subject extends Model
     public $incrementing = false;
     protected $keyType = 'string';
     public $timestamps = false;
-    protected $fillable = ['subject_id', 'name', 'credits', 'teacher_id'];
+    protected $fillable = ['subject_id', 'name', 'credits', 'color_foreground', 'color_background', 'teacher_id'];
 
     public function teacher() {
         return $this->belongsTo(Teacher::class, "teacher_id", "teacher_id");
