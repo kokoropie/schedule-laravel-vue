@@ -17,13 +17,28 @@ class ScheduleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        $total_row = Schedule::count();
+        $limit = $request->get('limit', 20);
+        if ($limit <= 0) $limit = 20;
+        $page = $request->get('page', 1);
+        if ($page <= 0) $page = 1;
+        $total_page = ceil($total_row/$limit);
+        if ($page > $total_page) $page = $total_page;
+        $sort = strtoupper($request->get('sort', 'DESC'));
+        $sort_by = strtolower($request->get('sort_by', 'schedule_id'));
+        if ($sort_by == "dateofweek") $sort_by = "dateOfWeek";
         return Inertia::render("Schedule", [
-            "schedules" => Schedule::get()->load(["subject"]),
+            "schedules" => Schedule::OrderBy($sort_by, $sort)->limit($limit)->skip(($page-1)*$limit)->get()->load(["subject"]),
             "subjects" => Subject::get(),
             "numOfClassPeriodsPerDay" => json_decode(Config::find("numOfClassPeriodsPerDay")->content)[0],
-            'timeOfEachClassPeriod' => json_decode(Config::find('timeOfEachClassPeriod')->content)
+            'timeOfEachClassPeriod' => json_decode(Config::find('timeOfEachClassPeriod')->content),
+            "limit" => $limit,
+            "page" => $page,
+            "total_page" => $total_page,
+            "sort" => $sort,
+            "sort_by" => $sort_by,
         ]);
     }
 

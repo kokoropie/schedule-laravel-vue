@@ -15,10 +15,14 @@ class TeacherController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        $sort = strtoupper($request->get('sort', 'ASC'));
+        $sort_by = strtolower($request->get('sort_by', 'teacher_id'));
         return Inertia::render("Teacher", [
-            "teachers" => Teacher::withCount(['subjects'])->get()
+            "teachers" => Teacher::OrderBy($sort_by, $sort)->withCount(['subjects'])->get(),
+            "sort" => $sort,
+            "sort_by" => $sort_by,
         ]);
     }
 

@@ -24,7 +24,7 @@ class StoreRequest extends FormRequest
         return [
             'subject_id' => 'required|unique:subjects,subject_id',
             'name' => 'required|string',
-            'credits' => 'required|numeric|min:1',
+            'credits' => 'required|numeric|min:0',
             'teacher_id' => 'required|exists:teachers,teacher_id',
             'color_foreground' => [
                 'required',

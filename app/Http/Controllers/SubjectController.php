@@ -16,11 +16,15 @@ class SubjectController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        $sort = strtoupper($request->get('sort', 'ASC'));
+        $sort_by = strtolower($request->get('sort_by', 'subject_id'));
         return Inertia::render("Subject", [
-            "subjects" => Subject::get()->load(['teacher']),
-            "teachers" => Teacher::all()
+            "subjects" => Subject::OrderBy($sort_by, $sort)->get()->load(['teacher']),
+            "teachers" => Teacher::all(),
+            "sort" => $sort,
+            "sort_by" => $sort_by,
         ]);
     }
 

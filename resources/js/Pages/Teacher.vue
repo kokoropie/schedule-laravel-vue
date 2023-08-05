@@ -15,6 +15,14 @@ defineProps({
         type: Object,
         required: true
     },
+    sort: {
+        type: String,
+        default: "ASC"
+    },
+    sort_by: {
+        type: String,
+        default: "teacher_id"
+    },
 });
 
 const formNew = useForm({
@@ -86,7 +94,7 @@ const submitDelete = () => {
     <Head title="Teachers" />
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight flex justify-between">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-100 leading-tight flex justify-between">
                 Teachers
                 <PrimaryButton @click="showModalNew">New</PrimaryButton>
             </h2>
@@ -97,9 +105,35 @@ const submitDelete = () => {
                     <table class="w-full">
                         <thead>
                             <tr class="bg-gray-700 text-white">
-                                <th class="px-3 py-3 whitespace-nowrap w-auto">#</th>
-                                <th class="px-3 md:px-6 py-3 whitespace-nowrap text-left">Name</th>
-                                <th class="px-3 md:px-6 py-3 whitespace-nowrap w-auto">Subjects</th>
+                                <th class="px-3 py-3 whitespace-nowrap w-auto">
+                                    <Link :href="route('teacher.index', {
+                                        sort: sort_by.toLowerCase()=='teacher_id' ? (sort.toUpperCase()=='DESC' ? 'ASC' : 'DESC') : 'ASC'
+                                    })" preserve-scroll class="flex items-center space-x-1 justify-center">
+                                        <span>#</span>
+                                        <svg v-if="sort.toUpperCase()=='ASC' && sort_by.toLowerCase()=='teacher_id'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 14l5-5l5 5z"></path></svg>
+                                        <svg v-if="sort.toUpperCase()=='DESC' && sort_by.toLowerCase()=='teacher_id'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 10l5 5l5-5z"></path></svg>
+                                    </Link>
+                                </th>
+                                <th class="px-3 md:px-6 py-3 whitespace-nowrap text-left">
+                                    <Link :href="route('teacher.index', {
+                                        sort: sort_by.toLowerCase()=='name' ? (sort.toUpperCase()=='DESC' ? 'ASC' : 'DESC') : 'ASC',
+                                        sort_by: 'name'
+                                    })" preserve-scroll class="flex items-center space-x-1">
+                                        <span>Name</span>
+                                        <svg v-if="sort.toUpperCase()=='ASC' && sort_by.toLowerCase()=='name'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 14l5-5l5 5z"></path></svg>
+                                        <svg v-if="sort.toUpperCase()=='DESC' && sort_by.toLowerCase()=='name'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 10l5 5l5-5z"></path></svg>
+                                    </Link>
+                                </th>
+                                <th class="px-3 md:px-6 py-3 whitespace-nowrap w-auto">
+                                    <Link :href="route('teacher.index', {
+                                        sort: sort_by.toLowerCase()=='subjects_count' ? (sort.toUpperCase()=='DESC' ? 'ASC' : 'DESC') : 'ASC',
+                                        sort_by: 'subjects_count'
+                                    })" preserve-scroll class="flex items-center space-x-1">
+                                        <svg v-if="sort.toUpperCase()=='ASC' && sort_by.toLowerCase()=='subjects_count'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 14l5-5l5 5z"></path></svg>
+                                        <svg v-if="sort.toUpperCase()=='DESC' && sort_by.toLowerCase()=='subjects_count'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 10l5 5l5-5z"></path></svg>
+                                        <span>Subjects</span>
+                                    </Link>
+                                </th>
                                 <th></th>
                             </tr>
                         </thead>

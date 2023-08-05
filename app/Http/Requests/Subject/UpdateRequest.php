@@ -27,7 +27,7 @@ class UpdateRequest extends FormRequest
                 \Illuminate\Validation\Rule::unique(\App\Models\Subject::class)->ignore($this->subject->subject_id, 'subject_id')
             ],
             'name' => 'required|string',
-            'credits' => 'required|numeric|min:1',
+            'credits' => 'required|numeric|min:0',
             'teacher_id' => 'required|exists:teachers,teacher_id',
             'color_foreground' => [
                 'required',

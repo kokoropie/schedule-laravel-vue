@@ -18,7 +18,15 @@ defineProps({
     teachers: {
         type: Object,
         required: true
-    }
+    },
+    sort: {
+        type: String,
+        default: "ASC"
+    },
+    sort_by: {
+        type: String,
+        default: "subject_id"
+    },
 });
 
 const formNew = useForm({
@@ -105,7 +113,7 @@ const submitDelete = () => {
     <Head title="Subjects" />
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight flex justify-between">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-100 leading-tight flex justify-between">
                 Subjects
                 <PrimaryButton @click="showModalNew">New</PrimaryButton>
             </h2>
@@ -116,10 +124,36 @@ const submitDelete = () => {
                     <table class="w-full">
                         <thead>
                             <tr class="bg-gray-700 text-white">
-                                <th class="px-3 py-3 whitespace-nowrap w-auto">ID</th>
-                                <th class="px-3 md:px-6 py-3 whitespace-nowrap text-left">Name</th>
+                                <th class="px-3 py-3 whitespace-nowrap w-auto">
+                                    <Link :href="route('subject.index', {
+                                        sort: sort_by.toLowerCase()=='subject_id' ? (sort.toUpperCase()=='DESC' ? 'ASC' : 'DESC') : 'ASC'
+                                    })" preserve-scroll class="flex items-center space-x-1 justify-center">
+                                        <span>ID</span>
+                                        <svg v-if="sort.toUpperCase()=='ASC' && sort_by.toLowerCase()=='subject_id'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 14l5-5l5 5z"></path></svg>
+                                        <svg v-if="sort.toUpperCase()=='DESC' && sort_by.toLowerCase()=='subject_id'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 10l5 5l5-5z"></path></svg>
+                                    </Link>
+                                </th>
+                                <th class="px-3 md:px-6 py-3 whitespace-nowrap text-left">
+                                    <Link :href="route('subject.index', {
+                                        sort: sort_by.toLowerCase()=='name' ? (sort.toUpperCase()=='DESC' ? 'ASC' : 'DESC') : 'ASC',
+                                        sort_by: 'name'
+                                    })" preserve-scroll class="flex items-center space-x-1">
+                                        <span>Name</span>
+                                        <svg v-if="sort.toUpperCase()=='ASC' && sort_by.toLowerCase()=='name'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 14l5-5l5 5z"></path></svg>
+                                        <svg v-if="sort.toUpperCase()=='DESC' && sort_by.toLowerCase()=='name'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 10l5 5l5-5z"></path></svg>
+                                    </Link>
+                                </th>
                                 <th class="px-3 md:px-6 py-3 whitespace-nowrap text-left w-auto">Teacher</th>
-                                <th class="px-3 md:px-6 py-3 whitespace-nowrap w-auto">Credits</th>
+                                <th class="px-3 md:px-6 py-3 whitespace-nowrap w-auto">
+                                    <Link :href="route('subject.index', {
+                                        sort: sort_by.toLowerCase()=='credits' ? (sort.toUpperCase()=='DESC' ? 'ASC' : 'DESC') : 'ASC',
+                                        sort_by: 'credits'
+                                    })" preserve-scroll class="flex items-center space-x-1">
+                                        <svg v-if="sort.toUpperCase()=='ASC' && sort_by.toLowerCase()=='credits'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 14l5-5l5 5z"></path></svg>
+                                        <svg v-if="sort.toUpperCase()=='DESC' && sort_by.toLowerCase()=='credits'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 10l5 5l5-5z"></path></svg>
+                                        <span>Credits</span>
+                                    </Link>
+                                </th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -189,7 +223,7 @@ const submitDelete = () => {
                             class="mt-1 block w-full"
                             v-model="formNew.credits"
                             required
-                            min="1"
+                            min="0"
                             step="1"
                             placeholder="0"
                         />
@@ -295,7 +329,7 @@ const submitDelete = () => {
                             class="mt-1 block w-full"
                             v-model="formEdit.credits"
                             required
-                            min="1"
+                            min="0"
                             step="1"
                             placeholder="0"
                         />
