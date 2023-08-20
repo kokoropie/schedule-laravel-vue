@@ -30,10 +30,10 @@ class ScheduleController extends Controller
         $sort_by = strtolower($request->get('sort_by', 'schedule_id'));
         if ($sort_by == "dateofweek") $sort_by = "dateOfWeek";
         return Inertia::render("Schedule", [
-            "schedules" => Schedule::OrderBy($sort_by, $sort)->limit($limit)->skip(($page-1)*$limit)->get()->load(["subject"]),
-            "subjects" => Subject::get(),
-            "numOfClassPeriodsPerDay" => json_decode(Config::find("numOfClassPeriodsPerDay")->content)[0],
-            'timeOfEachClassPeriod' => json_decode(Config::find('timeOfEachClassPeriod')->content),
+            "schedules" => fn () => Schedule::OrderBy($sort_by, $sort)->limit($limit)->skip(($page-1)*$limit)->get()->load(["subject"]),
+            "subjects" => fn () => Subject::get(),
+            "numOfClassPeriodsPerDay" => fn () => json_decode(Config::find("numOfClassPeriodsPerDay")->content)[0],
+            'timeOfEachClassPeriod' => fn () => json_decode(Config::find('timeOfEachClassPeriod')->content),
             "limit" => $limit,
             "page" => $page,
             "total_page" => $total_page,

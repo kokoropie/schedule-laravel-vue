@@ -50,10 +50,7 @@ class HomeController extends Controller
                     "rowspan" => 1,
                     "onl" => false,
                     "teacher" => "",
-                    "style" => [
-                        "color" => "#000000",
-                        "background" => "#ffffff"
-                    ]
+                    "style" => []
                 ];
                 foreach ($tmp as $schedule) {
                     if ($schedule->dateOfWeek - 1 == $date && $schedule->start == $i) {
@@ -93,18 +90,15 @@ class HomeController extends Controller
         }
 
         return Inertia::render('Home', [
-            'canLogin' => Route::has('login'),
-            'canRegister' => Route::has('register'),
-            'laravelVersion' => Application::VERSION,
-            'phpVersion' => PHP_VERSION,
-            'schedules' => $schedules,
+            'schedules' => fn () => $schedules,
             'date' => $curDate,
             'nameOfDate' => $nameOfDate,
             'maxADay' => $maxADay,
-            'timeOfEachClassPeriod' => json_decode(Config::find('timeOfEachClassPeriod')->content),
+            'timeOfEachClassPeriod' => fn () => json_decode(Config::find('timeOfEachClassPeriod')->content),
             'day' => date('Y-m-d', $time),
             'prev_day' => date('Y-m-d', $time - 24*60*60),
             'next_day' => date('Y-m-d', $time + 24*60*60),
+            'today' => date('Y-m-d')
         ]);
     }
 }

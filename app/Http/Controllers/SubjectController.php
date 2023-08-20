@@ -21,8 +21,8 @@ class SubjectController extends Controller
         $sort = strtoupper($request->get('sort', 'ASC'));
         $sort_by = strtolower($request->get('sort_by', 'subject_id'));
         return Inertia::render("Subject", [
-            "subjects" => Subject::OrderBy($sort_by, $sort)->get()->load(['teacher']),
-            "teachers" => Teacher::all(),
+            "subjects" => fn () => Subject::OrderBy($sort_by, $sort)->get()->load(['teacher']),
+            "teachers" => fn () => Teacher::all(),
             "sort" => $sort,
             "sort_by" => $sort_by,
         ]);

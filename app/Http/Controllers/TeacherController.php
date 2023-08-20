@@ -20,7 +20,7 @@ class TeacherController extends Controller
         $sort = strtoupper($request->get('sort', 'ASC'));
         $sort_by = strtolower($request->get('sort_by', 'teacher_id'));
         return Inertia::render("Teacher", [
-            "teachers" => Teacher::OrderBy($sort_by, $sort)->withCount(['subjects'])->get(),
+            "teachers" => fn () => Teacher::OrderBy($sort_by, $sort)->withCount(['subjects'])->get(),
             "sort" => $sort,
             "sort_by" => $sort_by,
         ]);
