@@ -49,6 +49,9 @@ defineProps({
     },
     next_day: {
         type: String
+    },
+    today: {
+        type: String
     }
 });
 
@@ -78,31 +81,55 @@ const htmlTableToExcel = (type) => {
         </template>
         <div class="py-6">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 sm:space-y-6">
-                <div class="flex flex-col xs:flex-row relative justify-center items-center space-y-2 xs:space-y-0 xs:space-x-3 text-center">
-                    <Link :href="route('home', prev_day)" preserve-scroll=""><PrimaryButton>Prev</PrimaryButton></Link>
-                    <TextInput :value="day" type="date" @change="event => router.visit(route('home', event.target.value), {preserveScroll: true})" />
-                    <Link :href="route('home', next_day)" preserve-scroll><PrimaryButton>Next</PrimaryButton></Link>
-                    <PrimaryButton class="sm:absolute right-0" @click="htmlTableToExcel('xlsx')">Export</PrimaryButton>
+                <div class="flex flex-wrap flex-col xs:flex-row relative justify-center items-center text-center">
+                    <Link v-if="day != today" :href="route('home')" preserve-scroll :only="['date', 'day', 'today', 'nameOfDate', 'next_day', 'prev_day', 'schedules']" class="sm:absolute left-0 mt-2"><PrimaryButton>Today</PrimaryButton></Link>
+                    <div class="flex flex-wrap flex-col xs:flex-row justify-center items-center space-y-2 xs:space-y-0 xs:space-x-3 text-center order-1 mt-2 mx-3">
+                        <Link :href="route('home', prev_day)" preserve-scroll :only="['date', 'day', 'today', 'nameOfDate', 'next_day', 'prev_day', 'schedules']">
+                            <PrimaryButton class="hidden sm:block">Prev</PrimaryButton>
+                            <PrimaryButton class="block sm:hidden">{{ "<" }}</PrimaryButton>
+                        </Link>
+                        <TextInput :value="day" type="date" @change="event => router.visit(route('home', event.target.value), {preserveScroll: true, only: ['date', 'day', 'today', 'nameOfDate', 'next_day', 'prev_day', 'schedules']})" />
+                        <Link :href="route('home', next_day)" preserve-scroll :only="['date', 'day', 'today', 'nameOfDate', 'next_day', 'prev_day', 'schedules']">
+                            <PrimaryButton class="hidden sm:block">Next</PrimaryButton>
+                            <PrimaryButton class="block sm:hidden">{{ ">" }}</PrimaryButton>
+                        </Link>
+                    </div>
+                    <PrimaryButton class="sm:absolute right-0 mt-2 xs:ml-3" @click="htmlTableToExcel('xlsx')">Export</PrimaryButton>
                 </div>
                 <div class="overflow-x-auto overflow-y-hidden">
                     <table class="w-full" ref="scheduleTable">
                         <tr>
                             <th class="px-6 py-1"></th>
-                            <th class="px-6 py-1 border border-black dark:border-white whitespace-nowrap bg-white dark:bg-black dark:text-white">
+                            <th class="px-6 py-1 border border-black dark:border-white whitespace-nowrap"
+                                :class="{
+                                    'bg-white dark:bg-black dark:text-white': nameOfDate[date].date != today,
+                                    'bg-green-100 dark:bg-green-700 dark:text-white': nameOfDate[date].date == today
+                                }"
+                            >
                                 <div class="flex flex-col">
                                     {{ nameOfDate[date].title }}
                                     <small>{{ nameOfDate[date].date }}</small>
                                 </div>
                             </th>
                             <template v-for="n in 7" :key="n">
-                                <th v-if="n > date + 1" class="px-6 py-1 border border-black dark:border-white whitespace-nowrap bg-white">
+                                <th v-if="n > date + 1" class="px-6 py-1 border border-black dark:border-white whitespace-nowrap"
+                                    :class="{
+                                        'bg-white dark:bg-black dark:text-white': nameOfDate[n - 1].date != today,
+                                        'bg-green-100 dark:bg-green-700 dark:text-white': nameOfDate[n - 1].date == today
+                                    }"
+                                >
                                     <div class="flex flex-col">
                                         {{ nameOfDate[n - 1].title }}
                                         <small>{{ nameOfDate[n - 1].date }}</small>
                                     </div>
                                 </th>
                             </template>
-                            <th v-for="n in date" :key="n" class="px-6 py-1 border border-black dark:border-white whitespace-nowrap bg-white">
+                            <th v-for="n in date" :key="n" class="px-6 py-1 border border-black dark:border-white whitespace-nowrap"
+                                :class="{
+                                    'bg-white dark:bg-black dark:text-white': nameOfDate[n - 1].date != today,
+                                    'bg-green-100 dark:bg-green-700 dark:text-white': nameOfDate[n - 1].date == today
+                                }"
+                            >
                                 <div class="flex flex-col">
                                     {{ nameOfDate[n - 1].title }}
                                     <small>{{ nameOfDate[n - 1].date }}</small>
