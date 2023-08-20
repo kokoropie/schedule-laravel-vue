@@ -174,7 +174,7 @@ const submitDelete = () => {
                                 <th class="px-3 py-3 whitespace-nowrap w-auto">
                                     <Link :href="route('schedule.index', {
                                         sort: sort_by.toLowerCase()=='schedule_id' ? (sort.toUpperCase()=='DESC' ? 'ASC' : 'DESC') : 'DESC'
-                                    })" preserve-scroll class="flex items-center space-x-1 justify-center">
+                                    })" preserve-scroll class="flex items-center space-x-1 justify-center" :only="['schedules', 'sort', 'sort_by', 'limit', 'page', 'total_page']">
                                         <span>#</span>
                                         <svg v-if="sort.toUpperCase()=='ASC' && sort_by.toLowerCase()=='schedule_id'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 14l5-5l5 5z"></path></svg>
                                         <svg v-if="sort.toUpperCase()=='DESC' && sort_by.toLowerCase()=='schedule_id'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 10l5 5l5-5z"></path></svg>
@@ -184,7 +184,7 @@ const submitDelete = () => {
                                     <Link :href="route('schedule.index', {
                                         sort: sort_by.toLowerCase()=='subject_id' ? (sort.toUpperCase()=='DESC' ? 'ASC' : 'DESC') : 'ASC',
                                         sort_by: 'subject_id'
-                                    })" preserve-scroll class="flex items-center space-x-1">
+                                    })" preserve-scroll class="flex items-center space-x-1" :only="['schedules', 'sort', 'sort_by', 'limit', 'page', 'total_page']">
                                         <span>Subject</span>
                                         <svg v-if="sort.toUpperCase()=='ASC' && sort_by.toLowerCase()=='subject_id'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 14l5-5l5 5z"></path></svg>
                                         <svg v-if="sort.toUpperCase()=='DESC' && sort_by.toLowerCase()=='subject_id'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 10l5 5l5-5z"></path></svg>
@@ -196,7 +196,7 @@ const submitDelete = () => {
                                     <Link :href="route('schedule.index', {
                                         sort: sort_by.toLowerCase()=='from' ? (sort.toUpperCase()=='DESC' ? 'ASC' : 'DESC') : 'ASC',
                                         sort_by: 'from'
-                                    })" preserve-scroll class="flex items-center space-x-1 justify-end">
+                                    })" preserve-scroll class="flex items-center space-x-1 justify-end" :only="['schedules', 'sort', 'sort_by', 'limit', 'page', 'total_page']">
                                         <svg v-if="sort.toUpperCase()=='ASC' && sort_by.toLowerCase()=='from'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 14l5-5l5 5z"></path></svg>
                                         <svg v-if="sort.toUpperCase()=='DESC' && sort_by.toLowerCase()=='from'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 10l5 5l5-5z"></path></svg>
                                         <span>From</span>
@@ -206,7 +206,7 @@ const submitDelete = () => {
                                     <Link :href="route('schedule.index', {
                                         sort: sort_by.toLowerCase()=='to' ? (sort.toUpperCase()=='DESC' ? 'ASC' : 'DESC') : 'ASC',
                                         sort_by: 'to'
-                                    })" preserve-scroll class="flex items-center space-x-1 justify-end">
+                                    })" preserve-scroll class="flex items-center space-x-1 justify-end" :only="['schedules', 'sort', 'sort_by', 'limit', 'page', 'total_page']">
                                         <svg v-if="sort.toUpperCase()=='ASC' && sort_by.toLowerCase()=='to'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 14l5-5l5 5z"></path></svg>
                                         <svg v-if="sort.toUpperCase()=='DESC' && sort_by.toLowerCase()=='to'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 10l5 5l5-5z"></path></svg>
                                         <span>To</span>
@@ -216,7 +216,7 @@ const submitDelete = () => {
                                     <Link :href="route('schedule.index', {
                                         sort: sort_by.toLowerCase()=='type' ? (sort.toUpperCase()=='DESC' ? 'ASC' : 'DESC') : 'ASC',
                                         sort_by: 'type'
-                                    })" preserve-scroll class="flex items-center space-x-1 justify-center">
+                                    })" preserve-scroll class="flex items-center space-x-1 justify-center" :only="['schedules', 'sort', 'sort_by', 'limit', 'page', 'total_page']">
                                         <span>Type</span>
                                         <svg v-if="sort.toUpperCase()=='ASC' && sort_by.toLowerCase()=='type'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 14l5-5l5 5z"></path></svg>
                                         <svg v-if="sort.toUpperCase()=='DESC' && sort_by.toLowerCase()=='type'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 10l5 5l5-5z"></path></svg>
@@ -226,7 +226,7 @@ const submitDelete = () => {
                                     <Link :href="route('schedule.index', {
                                         sort: sort_by.toLowerCase()=='dateofweek' ? (sort.toUpperCase()=='DESC' ? 'ASC' : 'DESC') : 'ASC',
                                         sort_by: 'dateOfWeek'
-                                    })" preserve-scroll class="flex items-center space-x-1">
+                                    })" preserve-scroll class="flex items-center space-x-1" :only="['schedules', 'sort', 'sort_by', 'limit', 'page', 'total_page']">
                                         <span>Date</span>
                                         <svg v-if="sort.toUpperCase()=='ASC' && sort_by.toLowerCase()=='dateofweek'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 14l5-5l5 5z"></path></svg>
                                         <svg v-if="sort.toUpperCase()=='DESC' && sort_by.toLowerCase()=='dateofweek'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 10l5 5l5-5z"></path></svg>

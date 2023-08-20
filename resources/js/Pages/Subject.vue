@@ -127,7 +127,7 @@ const submitDelete = () => {
                                 <th class="px-3 py-3 whitespace-nowrap w-auto">
                                     <Link :href="route('subject.index', {
                                         sort: sort_by.toLowerCase()=='subject_id' ? (sort.toUpperCase()=='DESC' ? 'ASC' : 'DESC') : 'ASC'
-                                    })" preserve-scroll class="flex items-center space-x-1 justify-center">
+                                    })" preserve-scroll class="flex items-center space-x-1 justify-center" :only="['subjects', 'sort', 'sort_by']">
                                         <span>ID</span>
                                         <svg v-if="sort.toUpperCase()=='ASC' && sort_by.toLowerCase()=='subject_id'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 14l5-5l5 5z"></path></svg>
                                         <svg v-if="sort.toUpperCase()=='DESC' && sort_by.toLowerCase()=='subject_id'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 10l5 5l5-5z"></path></svg>
@@ -137,7 +137,7 @@ const submitDelete = () => {
                                     <Link :href="route('subject.index', {
                                         sort: sort_by.toLowerCase()=='name' ? (sort.toUpperCase()=='DESC' ? 'ASC' : 'DESC') : 'ASC',
                                         sort_by: 'name'
-                                    })" preserve-scroll class="flex items-center space-x-1">
+                                    })" preserve-scroll class="flex items-center space-x-1" :only="['subjects', 'sort', 'sort_by']">
                                         <span>Name</span>
                                         <svg v-if="sort.toUpperCase()=='ASC' && sort_by.toLowerCase()=='name'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 14l5-5l5 5z"></path></svg>
                                         <svg v-if="sort.toUpperCase()=='DESC' && sort_by.toLowerCase()=='name'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 10l5 5l5-5z"></path></svg>
@@ -148,7 +148,7 @@ const submitDelete = () => {
                                     <Link :href="route('subject.index', {
                                         sort: sort_by.toLowerCase()=='credits' ? (sort.toUpperCase()=='DESC' ? 'ASC' : 'DESC') : 'ASC',
                                         sort_by: 'credits'
-                                    })" preserve-scroll class="flex items-center space-x-1">
+                                    })" preserve-scroll class="flex items-center space-x-1" :only="['subjects', 'sort', 'sort_by']">
                                         <svg v-if="sort.toUpperCase()=='ASC' && sort_by.toLowerCase()=='credits'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 14l5-5l5 5z"></path></svg>
                                         <svg v-if="sort.toUpperCase()=='DESC' && sort_by.toLowerCase()=='credits'" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m7 10l5 5l5-5z"></path></svg>
                                         <span>Credits</span>
