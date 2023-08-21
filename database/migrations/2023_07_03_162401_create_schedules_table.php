@@ -13,14 +13,11 @@ return new class extends Migration
     {
         Schema::create('schedules', function (Blueprint $table) {
             $table->id("schedule_id");
-            $table->char("subject_id", 10);
-            $table->tinyInteger("start");
-            $table->tinyInteger("end");
-            $table->date("from");
-            $table->date("to");
-            $table->enum("dateOfWeek", [1,2,3,4,5,6,7])->default(2);
-            $table->enum("type", ["ONLINE", "OFFLINE"])->default("OFFLINE");
-            $table->foreign("subject_id")->references('subject_id')->on('subjects');
+            $table->string("name", 100);
+            $table->bigInteger('user_id')->unsigned();
+            $table->tinyInteger("numOfClassPeriodsPerDay")->unsigned()->default(1);
+            $table->json("timeOfEachClassPeriod");
+            $table->foreign("user_id")->references('user_id')->on('users');
         });
     }
 

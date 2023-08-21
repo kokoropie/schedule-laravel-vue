@@ -7,7 +7,7 @@ use App\Models\Teacher;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
-use Inertia\Response; 
+use Inertia\Response;
 use App\Http\Requests\Subject\StoreRequest;
 use App\Http\Requests\Subject\UpdateRequest;
 
@@ -21,8 +21,8 @@ class SubjectController extends Controller
         $sort = strtoupper($request->get('sort', 'ASC'));
         $sort_by = strtolower($request->get('sort_by', 'subject_id'));
         return Inertia::render("Subject", [
-            "subjects" => fn () => Subject::OrderBy($sort_by, $sort)->get()->load(['teacher']),
-            "teachers" => fn () => Teacher::all(),
+            "subjects" => fn () => auth()->user()->subjects()->OrderBy($sort_by, $sort)->get()->load(['teacher']),
+            "teachers" => fn () => auth()->user()->teachers,
             "sort" => $sort,
             "sort_by" => $sort_by,
         ]);
@@ -43,7 +43,7 @@ class SubjectController extends Controller
     {
         $validated = $request->validated();
 
-        Subject::insert($validated);
+        auth()->user()->subjects()->create($validated);
 
         return redirect(route('subject.index'));
     }
@@ -71,7 +71,7 @@ class SubjectController extends Controller
     {
         $validated = $request->validated();
 
-        $subject->update($validated);
+        auth()->user()->subjects()->where('subject_id', $subject->subject_id)->update($validated);
 
         return redirect(route('subject.index'));
     }
@@ -81,7 +81,7 @@ class SubjectController extends Controller
      */
     public function destroy(Subject $subject): RedirectResponse
     {
-        $subject->delete();
+        auth()->user()->subjects()->where('subject_id', $subject->subject_id)->delete();
 
         return redirect(route('subject.index'));
     }

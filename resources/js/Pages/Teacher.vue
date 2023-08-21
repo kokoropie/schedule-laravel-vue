@@ -94,7 +94,7 @@ const submitDelete = () => {
     <Head title="Teachers" />
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-100 leading-tight flex justify-between">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-100 leading-tight flex justify-between items-center">
                 Teachers
                 <PrimaryButton @click="showModalNew">New</PrimaryButton>
             </h2>

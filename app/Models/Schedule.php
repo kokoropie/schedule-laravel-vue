@@ -11,9 +11,24 @@ class Schedule extends Model
     protected $table = 'schedules';
     protected $primaryKey = 'schedule_id';
     public $timestamps = false;
-    protected $fillable = ['subject_id', 'start', 'end', 'from', 'to', 'type', 'dateOfWeek'];
+    protected $fillable = ['name', 'numOfClassPeriodsPerDay', 'timeOfEachClassPeriod'];
 
-    public function subject() {
-        return $this->belongsTo(Subject::class, "subject_id", "subject_id");
+    protected $casts = [
+        'timeOfEachClassPeriod' => 'array'
+    ];
+
+    public function user() {
+        return $this->belongsTo(User::class, "user_id", "user_id");
+    }
+
+    public function details() {
+        return $this->hasMany(ScheduleDetail::class, "schedule_id", "schedule_id");
+    }
+
+    protected static function booted(): void
+    {
+        static::deleting(function (Schedule $schedule) {
+            $schedule->details()->delete();
+        });
     }
 }

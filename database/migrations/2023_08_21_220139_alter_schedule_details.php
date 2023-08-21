@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('configs', function (Blueprint $table) {
-            $table->char("name", 100)->primary();
-            $table->json("content");
+        Schema::table('schedule_details', function (Blueprint $table) {
+            $table->id("schedule_detail_id")->first();
         });
     }
 
@@ -22,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('configs');
+        Schema::table('schedule_details', function (Blueprint $table) {
+            //
+        });
     }
 };

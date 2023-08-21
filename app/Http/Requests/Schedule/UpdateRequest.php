@@ -22,18 +22,16 @@ class UpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        $numOfClassPeriodsPerDay = json_decode(Config::find("numOfClassPeriodsPerDay")->content)[0];
         return [
-            'subject_id' => 'required|exists:subjects,subject_id',
-            'start' => 'required|numeric|min:1|max:' . $numOfClassPeriodsPerDay,
-            'end' => 'required|numeric|gte:start|max:' . $numOfClassPeriodsPerDay,
-            'from' => 'required|date',
-            'to' => 'required|date|after_or_equal:from',
-            'type' => 'required|in:OFFLINE,ONLINE',
-            'dateOfWeek' => 'required|numeric|min:1|max:7'
+            'name' => 'required',
+            'numOfClassPeriodsPerDay' => 'required|numeric|min:1',
+            'timeOfEachClassPeriod' => 'required|array',
+            'timeOfEachClassPeriod.*' => 'required|array:start,end',
+            'timeOfEachClassPeriod.*.start' => 'required|distinct|date_format:H:i',
+            'timeOfEachClassPeriod.*.end' => 'required|distinct|date_format:H:i|after:timeOfEachClassPeriod.*.start'
         ];
     }
-    
+
     /**
      * Get the error messages for the defined validation rules.
      *
@@ -42,27 +40,19 @@ class UpdateRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'subject_id.required' => 'Please choose subject',
-            'subject_id.exists' => 'Subject doesn\'t exist',
-            'start.required' => 'Please input starting class periods',
-            'start.numeric' => 'Please input starting class periods',
-            'start.min' => 'Atleast, starting class periods must be at 1',
-            'start.max' => 'Class periods just have to be started at :max',
-            'end.required' => 'Please input ending class periods',
-            'end.numeric' => 'Please input ending class periods',
-            'end.gte' => 'Class periods must be ended after or equal the starting',
-            'end.max' => 'Atleast, ending class periods must be at :max',
-            'from.required' => 'Please input schedule\'s date from',
-            'from.date' => 'Please input schedule\'s date from',
-            'to.required' => 'Please input schedule\'s date to',
-            'to.date' => 'Please input schedule\'s date to',
-            'to.after_or_equal' => 'Atleast, the schedule needs to have 1 day to study',
-            'type.required' => 'Please choose type to study',
-            'type.in' => 'Please choose type to study',
-            'dateOfWeek.required' => 'Please choose date of week',
-            'dateOfWeek.numeric' => 'Please choose date of week',
-            'dateOfWeek.min' => 'Please choose date of week',
-            'dateOfWeek.max' => 'Please choose date of week',
+            'name.required' => 'Please input name',
+            'numOfClassPeriodsPerDay.required' => 'Please input num of class periods per day',
+            'numOfClassPeriodsPerDay.numeric' => 'Please input num of class periods per day',
+            'numOfClassPeriodsPerDay.min' => 'Num of class periods atleast is :min',
+            'timeOfEachClassPeriod.required' => 'Please input time of period',
+            'timeOfEachClassPeriod.array' => 'Please input time of period',
+            'timeOfEachClassPeriod.*.required' => 'Please input time of period :index',
+            'timeOfEachClassPeriod.*.array:start,end' => 'Please input time of period :index',
+            'timeOfEachClassPeriod.*.start.required' => 'Please input time start of period :index',
+            'timeOfEachClassPeriod.*.start.date_format' => 'Please input time start of period :index',
+            'timeOfEachClassPeriod.*.end.required' => 'Please input time end of period :index',
+            'timeOfEachClassPeriod.*.end.date_format' => 'Please input time end of period :index',
+            'timeOfEachClassPeriod.*.end.after' => 'Time end must be after starting of period :index',
         ];
     }
 }

@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\Subject;
 
+use App\Models\Subject;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreRequest extends FormRequest
 {
@@ -22,7 +25,10 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'subject_id' => 'required|unique:subjects,subject_id',
+            'subject_id' => [
+                'required',
+                Rule::unique(Subject::class)->where(fn (Builder $query) => $query->where('user_id', auth()->user()->user_id))
+            ],
             'name' => 'required|string',
             'credits' => 'required|numeric|min:0',
             'teacher_id' => 'required|exists:teachers,teacher_id',
@@ -46,7 +52,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'subject_id.required' => 'Please input subject\'s ID',
-            'subject_id.unique' => 'Subject\'s ID existed', 
+            'subject_id.unique' => 'Subject\'s ID existed',
             'name.required' => 'Please input subject\'s name',
             'name.string' => 'Subject\'s name isn\'t in right format',
             'credits.required' => 'Please input subject\'s credits',

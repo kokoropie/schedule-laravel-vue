@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Teacher;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
-use Inertia\Response; 
+use Inertia\Response;
 use App\Http\Requests\Teacher\StoreRequest;
 use App\Http\Requests\Teacher\UpdateRequest;
 
@@ -20,7 +21,7 @@ class TeacherController extends Controller
         $sort = strtoupper($request->get('sort', 'ASC'));
         $sort_by = strtolower($request->get('sort_by', 'teacher_id'));
         return Inertia::render("Teacher", [
-            "teachers" => fn () => Teacher::OrderBy($sort_by, $sort)->withCount(['subjects'])->get(),
+            "teachers" => fn () => auth()->user()->teachers()->OrderBy($sort_by, $sort)->withCount(['subjects'])->get(),
             "sort" => $sort,
             "sort_by" => $sort_by,
         ]);
@@ -41,7 +42,7 @@ class TeacherController extends Controller
     {
         $validated = $request->validated();
 
-        Teacher::insert($validated);
+        auth()->user()->teachers()->create($validated);
 
         return redirect(route('teacher.index'));
     }

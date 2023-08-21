@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\Subject;
 
+use App\Models\Subject;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateRequest extends FormRequest
 {
@@ -24,7 +27,7 @@ class UpdateRequest extends FormRequest
         return [
             'subject_id' => [
                 'required',
-                \Illuminate\Validation\Rule::unique(\App\Models\Subject::class)->ignore($this->subject->subject_id, 'subject_id')
+                Rule::unique(Subject::class)->where(fn (Builder $query) => $query->where('user_id', auth()->user()->user_id))->ignore($this->subject->subject_id, 'subject_id')
             ],
             'name' => 'required|string',
             'credits' => 'required|numeric|min:0',
@@ -49,7 +52,7 @@ class UpdateRequest extends FormRequest
     {
         return [
             'subject_id.required' => 'Please input subject\'s ID',
-            'subject_id.unique' => 'Subject\'s ID existed', 
+            'subject_id.unique' => 'Subject\'s ID existed',
             'name.required' => 'Please input subject\'s name',
             'name.string' => 'Subject\'s name isn\'t in right format',
             'credits.required' => 'Please input subject\'s credits',

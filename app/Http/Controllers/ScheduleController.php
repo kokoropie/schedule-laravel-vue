@@ -4,11 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Schedule;
 use App\Models\Subject;
-use App\Models\Config;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
-use Inertia\Response; 
+use Inertia\Response;
 use App\Http\Requests\Schedule\StoreRequest;
 use App\Http\Requests\Schedule\UpdateRequest;
 
@@ -19,27 +18,56 @@ class ScheduleController extends Controller
      */
     public function index(Request $request): Response
     {
-        $total_row = Schedule::count();
-        $limit = $request->get('limit', 20);
-        if ($limit <= 0) $limit = 20;
-        $page = $request->get('page', 1);
-        if ($page <= 0) $page = 1;
-        $total_page = ceil($total_row/$limit);
-        if ($page > $total_page) $page = $total_page;
+        $id = $request->get('id', null);
         $sort = strtoupper($request->get('sort', 'DESC'));
-        $sort_by = strtolower($request->get('sort_by', 'schedule_id'));
+        $sort_by = strtolower($request->get('sort_by', 'schedule_detail_id'));
         if ($sort_by == "dateofweek") $sort_by = "dateOfWeek";
-        return Inertia::render("Schedule", [
-            "schedules" => fn () => Schedule::OrderBy($sort_by, $sort)->limit($limit)->skip(($page-1)*$limit)->get()->load(["subject"]),
-            "subjects" => fn () => Subject::get(),
-            "numOfClassPeriodsPerDay" => fn () => json_decode(Config::find("numOfClassPeriodsPerDay")->content)[0],
-            'timeOfEachClassPeriod' => fn () => json_decode(Config::find('timeOfEachClassPeriod')->content),
-            "limit" => $limit,
-            "page" => $page,
-            "total_page" => $total_page,
-            "sort" => $sort,
-            "sort_by" => $sort_by,
-        ]);
+        if (!$id) {
+            $schedule = auth()->user()->schedules()->first();
+        } else {
+            if (auth()->user()->schedules()->where("schedule_id", $id)->exists()) {
+                $schedule = auth()->user()->schedules()->where("schedule_id", $id)->first();
+            } else {
+                $schedule = auth()->user()->schedules()->first();
+            }
+        }
+        if ($schedule) {
+            $details = $schedule->details();
+            $total_row = $details->count();
+            $limit = $request->get('limit', 20);
+            if ($limit <= 0) $limit = 20;
+            $page = $request->get('page', 1);
+            if ($page <= 0) $page = 1;
+            $total_page = ceil($total_row/$limit);
+            if ($page > $total_page) $page = $total_page;
+            return Inertia::render("Schedule", [
+                "schedules" => fn () => auth()->user()->schedules,
+                "schedule_selected" => fn () => $schedule,
+                "schedule_details" => fn () => $details->OrderBy($sort_by, $sort)->limit($limit)->skip(($page-1)*$limit)->get()->load(["subject"]),
+                "subjects" => fn () => auth()->user()->subjects,
+                "numOfClassPeriodsPerDay" => fn () => $schedule->numOfClassPeriodsPerDay,
+                'timeOfEachClassPeriod' => fn () => $schedule->timeOfEachClassPeriod,
+                "limit" => $limit,
+                "page" => $page,
+                "total_page" => $total_page,
+                "sort" => $sort,
+                "sort_by" => $sort_by,
+            ]);
+        } else {
+            return Inertia::render("Schedule", [
+                "schedules" => fn () => auth()->user()->schedules,
+                "schedule_selected" => fn () => null,
+                "schedule_details" => fn () => [],
+                "subjects" => fn () => auth()->user()->subjects,
+                "numOfClassPeriodsPerDay" => fn () => 0,
+                'timeOfEachClassPeriod' => fn () => [],
+                "limit" => 0,
+                "page" => 0,
+                "total_page" => 0,
+                "sort" => $sort,
+                "sort_by" => $sort_by
+            ]);
+        }
     }
 
     /**
@@ -57,9 +85,11 @@ class ScheduleController extends Controller
     {
         $validated = $request->validated();
 
-        Schedule::insert($validated);
+        // dd($validated);
 
-        return redirect(route('schedule.index'));
+        $new = auth()->user()->schedules()->create($validated);
+
+        return redirect(route('schedule.index', ["id" => $new]));
     }
 
     /**
@@ -87,7 +117,7 @@ class ScheduleController extends Controller
 
         $schedule->update($validated);
 
-        return redirect(route('schedule.index'));
+        return redirect()->back();
     }
 
     /**
