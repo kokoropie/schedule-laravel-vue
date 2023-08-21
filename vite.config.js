@@ -17,4 +17,14 @@ export default defineConfig({
             },
         }),
     ],
+    build: {
+        sourcemap: 'hidden',
+        rollupOptions: {
+            output: {
+                entryFileNames: `assets/[name].js`,
+                chunkFileNames: `assets/[hash].js`,
+                assetFileNames: `assets/[hash].[ext]`
+            }
+        }
+    }
 });
