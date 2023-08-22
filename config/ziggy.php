@@ -1,7 +1,8 @@
-<?php 
+<?php
 return [
     "except" => [
         "sanctum.*",
-        "ignition.*"
+        "ignition.*",
+        "debugbar.*"
     ]
 ];
