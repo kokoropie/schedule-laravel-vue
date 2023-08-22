@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\ScheduleDetail;
 
-use App\Models\Schedule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreRequest extends FormRequest

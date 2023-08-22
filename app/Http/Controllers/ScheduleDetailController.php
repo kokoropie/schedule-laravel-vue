@@ -31,6 +31,8 @@ class ScheduleDetailController extends Controller
      */
     public function store(StoreRequest $request, Schedule $schedule)
     {
+        $this->authorize("create", [$schedule, ScheduleDetail::class]);
+
         $validated = $request->validated();
 
         $schedule->details()->create($validated);
@@ -59,6 +61,8 @@ class ScheduleDetailController extends Controller
      */
     public function update(UpdateRequest $request, Schedule $schedule, ScheduleDetail $detail)
     {
+        $this->authorize("update", [$schedule, $detail]);
+
         $validated = $request->validated();
 
         $detail->update($validated);
@@ -71,6 +75,8 @@ class ScheduleDetailController extends Controller
      */
     public function destroy(Schedule $schedule, ScheduleDetail $detail)
     {
+        $this->authorize("delete", [$schedule, $detail]);
+
         $detail->delete();
         return redirect()->back();
     }

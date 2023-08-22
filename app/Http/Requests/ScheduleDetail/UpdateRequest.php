@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\ScheduleDetail;
 
-use App\Models\Schedule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateRequest extends FormRequest
@@ -12,7 +11,7 @@ class UpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->check();
+        return auth()->check() && $this->user()->can('update', [$this->schedule, $this->detail]);
     }
 
     /**

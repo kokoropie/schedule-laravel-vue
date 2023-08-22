@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Teacher;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
@@ -18,6 +17,8 @@ class TeacherController extends Controller
      */
     public function index(Request $request): Response
     {
+        $this->authorize('viewAny', Teacher::class);
+
         $sort = strtoupper($request->get('sort', 'ASC'));
         $sort_by = strtolower($request->get('sort_by', 'teacher_id'));
         return Inertia::render("Teacher", [
@@ -40,6 +41,8 @@ class TeacherController extends Controller
      */
     public function store(StoreRequest $request): RedirectResponse
     {
+        $this->authorize('create', Teacher::class);
+
         $validated = $request->validated();
 
         auth()->user()->teachers()->create($validated);
@@ -68,6 +71,8 @@ class TeacherController extends Controller
      */
     public function update(UpdateRequest $request, Teacher $teacher): RedirectResponse
     {
+        $this->authorize('update', $teacher);
+
         $validated = $request->validated();
 
         $teacher->update($validated);
@@ -80,6 +85,8 @@ class TeacherController extends Controller
      */
     public function destroy(Teacher $teacher): RedirectResponse
     {
+        $this->authorize('delete', $teacher);
+
         $teacher->delete();
 
         return redirect(route('teacher.index'));
