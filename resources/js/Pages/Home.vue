@@ -76,7 +76,7 @@ const htmlTableToExcel = (type) => {
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-100 leading-tight flex items-center"
                 v-if="schedules.length > 0">
                 <span class="mr-auto">{{ schedule_selected.name }}</span>
-                <Dropdown align="right" width="48">
+                <Dropdown align="right" width="48" v-if="schedules.length > 1">
                     <template #trigger>
                         <span class="inline-flex rounded-md">
                             <PrimaryButton>
@@ -111,11 +111,11 @@ const htmlTableToExcel = (type) => {
         <div class="py-6">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 sm:space-y-6" v-if="schedules">
                 <div class="flex flex-wrap flex-col xs:flex-row relative justify-center items-center text-center">
-                    <Link v-if="day != today" :href="route('home', {
+                    <Link v-if="day != today" :href="route('home', schedules.length > 1 ? {
                         _query: {
                             id: schedule_selected.schedule_id
                         }
-                    })" preserve-scroll
+                    } : {})" preserve-scroll
                         :only="['date', 'day', 'today', 'nameOfDate', 'next_day', 'prev_day', 'schedule_details']"
                         class="sm:absolute left-0 mt-2">
                     <PrimaryButton>Today</PrimaryButton>
@@ -124,9 +124,9 @@ const htmlTableToExcel = (type) => {
                         class="flex flex-wrap flex-col xs:flex-row justify-center items-center space-y-2 xs:space-y-0 xs:space-x-3 text-center order-1 mt-2 mx-3">
                         <Link :href="route('home', {
                             day: prev_day,
-                            _query: {
+                            _query: schedules.length > 1 ? {
                                 id: schedule_selected.schedule_id
-                            }
+                            } : {}
                         })" preserve-scroll
                             :only="['date', 'day', 'today', 'nameOfDate', 'next_day', 'prev_day', 'schedule_details']">
                         <PrimaryButton class="hidden sm:block">Prev</PrimaryButton>
@@ -135,15 +135,15 @@ const htmlTableToExcel = (type) => {
                                 <TextInput :value="day" type="date"
                                     @change="event => router.visit(route('home', {
                                         day: event.target.value,
-                                        _query: {
+                                        _query: schedules.length > 1 ?{
                                             id: schedule_selected.schedule_id
-                                        }
+                                        } : {}
                                     }), { preserveScroll: true, only: ['date', 'day', 'today', 'nameOfDate', 'next_day', 'prev_day', 'schedule_details'] })" />
                                 <Link :href="route('home', {
                                     day: next_day,
-                                    _query: {
+                                    _query: schedules.length > 1 ?{
                                         id: schedule_selected.schedule_id
-                                    }
+                                    } : {}
                                 })" preserve-scroll
                                     :only="['date', 'day', 'today', 'nameOfDate', 'next_day', 'prev_day', 'schedule_details']">
                                 <PrimaryButton class="hidden sm:block">Next</PrimaryButton>
