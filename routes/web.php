@@ -46,7 +46,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('/teacher', TeacherController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('/subject', SubjectController::class)->only(['index', 'store', 'update', 'destroy']);
-    Route::resource('/schedule', ScheduleController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('/schedule', ScheduleController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('/schedule.detail', ScheduleDetailController::class)->only(['store', 'update', 'destroy']);
 });
 

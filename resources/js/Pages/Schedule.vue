@@ -293,8 +293,8 @@ const submitDelete = () => {
                         <button
                             class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 dark:text-gray-50 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 transition duration-150 ease-in-out"
                             @click="showModalScheduleNew()">New Schedule</button>
-                        <DropdownLink v-for="schedule in schedules"
-                            :href="route('schedule.index', { id: schedule.schedule_id })" preserve-scroll> {{ schedule.name
+                        <DropdownLink v-for="schedule in schedules" :href="route('schedule.show', schedule)"
+                            preserve-scroll> {{ schedule.name
                             }}
                         </DropdownLink>
                     </template>
@@ -341,9 +341,9 @@ const submitDelete = () => {
                         <thead>
                             <tr class="bg-gray-700 text-white">
                                 <th class="px-3 py-3 whitespace-nowrap w-auto">
-                                    <Link :href="route('schedule.index', {
+                                    <Link :href="route('schedule.show', {
                                         sort: sort_by.toLowerCase() == 'schedule_detail_id' ? (sort.toUpperCase() == 'DESC' ? 'ASC' : 'DESC') : 'DESC',
-                                        id: schedule_selected.schedule_id
+                                        schedule: schedule_selected
                                     })" preserve-scroll class="flex items-center space-x-1 justify-center"
                                         :only="['schedule_details', 'sort', 'sort_by', 'limit', 'page', 'total_page']">
                                     <span>#</span>
@@ -358,10 +358,10 @@ const submitDelete = () => {
                                     </Link>
                                 </th>
                                 <th class="px-3 md:px-6 py-3 whitespace-nowrap text-left">
-                                    <Link :href="route('schedule.index', {
+                                    <Link :href="route('schedule.show', {
                                         sort: sort_by.toLowerCase() == 'subject_id' ? (sort.toUpperCase() == 'DESC' ? 'ASC' : 'DESC') : 'ASC',
                                         sort_by: 'subject_id',
-                                        id: schedule_selected.schedule_id
+                                        schedule: schedule_selected
                                     })" preserve-scroll class="flex items-center space-x-1"
                                         :only="['schedule_details', 'sort', 'sort_by', 'limit', 'page', 'total_page']">
                                     <span>Subject</span>
@@ -375,13 +375,47 @@ const submitDelete = () => {
                                     </svg>
                                     </Link>
                                 </th>
-                                <th class="px-3 md:px-6 py-3 whitespace-nowrap text-right w-auto">Start</th>
-                                <th class="px-3 md:px-6 py-3 whitespace-nowrap text-right w-auto">End</th>
                                 <th class="px-3 md:px-6 py-3 whitespace-nowrap text-right w-auto">
-                                    <Link :href="route('schedule.index', {
+                                    <Link :href="route('schedule.show', {
+                                        sort: sort_by.toLowerCase() == 'start' ? (sort.toUpperCase() == 'DESC' ? 'ASC' : 'DESC') : 'ASC',
+                                        sort_by: 'start',
+                                        schedule: schedule_selected
+                                    })" preserve-scroll class="flex items-center space-x-1 justify-end"
+                                        :only="['schedule_details', 'sort', 'sort_by', 'limit', 'page', 'total_page']">
+                                    <svg v-if="sort.toUpperCase() == 'ASC' && sort_by.toLowerCase() == 'start'"
+                                        xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                        <path fill="currentColor" d="m7 14l5-5l5 5z"></path>
+                                    </svg>
+                                    <svg v-if="sort.toUpperCase() == 'DESC' && sort_by.toLowerCase() == 'start'"
+                                        xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                        <path fill="currentColor" d="m7 10l5 5l5-5z"></path>
+                                    </svg>
+                                    <span>Start</span>
+                                    </Link>
+                                </th>
+                                <th class="px-3 md:px-6 py-3 whitespace-nowrap text-right w-auto">
+                                    <Link :href="route('schedule.show', {
+                                        sort: sort_by.toLowerCase() == 'end' ? (sort.toUpperCase() == 'DESC' ? 'ASC' : 'DESC') : 'ASC',
+                                        sort_by: 'end',
+                                        schedule: schedule_selected
+                                    })" preserve-scroll class="flex items-center space-x-1 justify-end"
+                                        :only="['schedule_details', 'sort', 'sort_by', 'limit', 'page', 'total_page']">
+                                    <svg v-if="sort.toUpperCase() == 'ASC' && sort_by.toLowerCase() == 'end'"
+                                        xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                        <path fill="currentColor" d="m7 14l5-5l5 5z"></path>
+                                    </svg>
+                                    <svg v-if="sort.toUpperCase() == 'DESC' && sort_by.toLowerCase() == 'end'"
+                                        xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                        <path fill="currentColor" d="m7 10l5 5l5-5z"></path>
+                                    </svg>
+                                    <span>End</span>
+                                    </Link>
+                                </th>
+                                <th class="px-3 md:px-6 py-3 whitespace-nowrap text-right w-auto">
+                                    <Link :href="route('schedule.show', {
                                         sort: sort_by.toLowerCase() == 'from' ? (sort.toUpperCase() == 'DESC' ? 'ASC' : 'DESC') : 'ASC',
                                         sort_by: 'from',
-                                        id: schedule_selected.schedule_id
+                                        schedule: schedule_selected
                                     })" preserve-scroll class="flex items-center space-x-1 justify-end"
                                         :only="['schedule_details', 'sort', 'sort_by', 'limit', 'page', 'total_page']">
                                     <svg v-if="sort.toUpperCase() == 'ASC' && sort_by.toLowerCase() == 'from'"
@@ -396,10 +430,10 @@ const submitDelete = () => {
                                     </Link>
                                 </th>
                                 <th class="px-3 md:px-6 py-3 whitespace-nowrap text-right w-auto">
-                                    <Link :href="route('schedule.index', {
+                                    <Link :href="route('schedule.show', {
                                         sort: sort_by.toLowerCase() == 'to' ? (sort.toUpperCase() == 'DESC' ? 'ASC' : 'DESC') : 'ASC',
                                         sort_by: 'to',
-                                        id: schedule_selected.schedule_id
+                                        schedule: schedule_selected
                                     })" preserve-scroll class="flex items-center space-x-1 justify-end"
                                         :only="['schedule_details', 'sort', 'sort_by', 'limit', 'page', 'total_page']">
                                     <svg v-if="sort.toUpperCase() == 'ASC' && sort_by.toLowerCase() == 'to'"
@@ -414,10 +448,10 @@ const submitDelete = () => {
                                     </Link>
                                 </th>
                                 <th class="px-3 md:px-6 py-3 whitespace-nowrap w-auto">
-                                    <Link :href="route('schedule.index', {
+                                    <Link :href="route('schedule.show', {
                                         sort: sort_by.toLowerCase() == 'type' ? (sort.toUpperCase() == 'DESC' ? 'ASC' : 'DESC') : 'ASC',
                                         sort_by: 'type',
-                                        id: schedule_selected.schedule_id
+                                        schedule: schedule_selected
                                     })" preserve-scroll class="flex items-center space-x-1 justify-center"
                                         :only="['schedule_details', 'sort', 'sort_by', 'limit', 'page', 'total_page']">
                                     <span>Type</span>
@@ -432,10 +466,10 @@ const submitDelete = () => {
                                     </Link>
                                 </th>
                                 <th class="px-3 md:px-6 py-3 whitespace-nowrap text-left w-auto">
-                                    <Link :href="route('schedule.index', {
+                                    <Link :href="route('schedule.show', {
                                         sort: sort_by.toLowerCase() == 'dateofweek' ? (sort.toUpperCase() == 'DESC' ? 'ASC' : 'DESC') : 'ASC',
                                         sort_by: 'dateOfWeek',
-                                        id: schedule_selected.schedule_id
+                                        schedule: schedule_selected
                                     })" preserve-scroll class="flex items-center space-x-1"
                                         :only="['schedule_details', 'sort', 'sort_by', 'limit', 'page', 'total_page']">
                                     <span>Date</span>
@@ -853,4 +887,5 @@ const submitDelete = () => {
                 <DangerButton @click="submitDelete" type="button">Yes</DangerButton>
             </div>
         </Modal>
-    </AuthenticatedLayout></template>
+    </AuthenticatedLayout>
+</template>
