@@ -6,6 +6,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -22,33 +23,35 @@ class HomeController extends Controller
             }
         }
         if ($schedule_selected) {
-            $time = time();
+            $time = Carbon::today(config("app.timezone", "Asia/Ho_Chi_Minh"));
 
             if (!empty($day)) {
-                $time = strtotime($day);
+                $time = Carbon::createFromFormat("!Y-m-d", $day, config("app.timezone", "Asia/Ho_Chi_Minh"));
             }
 
-            $nextWeek = $time + 60*60*24*7;
+            $nextWeek = $time->copy()->addDays(7);
 
             $schedules = [];
             $tmp = $schedule_selected->details()->where(function($query) use ($nextWeek, $time) {
-                $query->whereDate("from", "<=", date("Y-m-d", $time))
-                    ->whereDate("to", ">", date("Y-m-d", $nextWeek));
+                $query->whereDate("from", "<=", $time)
+                    ->whereDate("to", ">", $nextWeek);
             })
             ->orWhere(function($query) use ($nextWeek, $time) {
-                $query->whereDate('from', ">=", date("Y-m-d", $time))
-                    ->whereDate('from', "<", date("Y-m-d", $nextWeek));
+                $query->whereDate('from', ">=", $time)
+                    ->whereDate('from', "<", $nextWeek);
             })
             ->orWhere(function($query) use ($nextWeek, $time) {
-                $query->whereDate('to', ">=", date("Y-m-d", $time))
-                    ->whereDate('to', "<", date("Y-m-d", $nextWeek));
+                $query->whereDate('to', ">=", $time)
+                    ->whereDate('to', "<", $nextWeek);
             })->get();
             $maxADay = $schedule_selected->numOfClassPeriodsPerDay;
 
+            $date = $time->copy();
             for ($j = 0; $j < 7; ++$j) {
                 $schedules[$j] = [];
-                $date = date("w", $time + 60*60*24*$j);
-                for ($i = 1; $i <= $maxADay; ++$i) {
+                // $date->addDay();
+                // $date = $time->copy()->addDays($j);
+                for ($i = 1; $i <= $maxADay; $i++) {
                     $schedules[$j][$i] = [
                         "label" => "",
                         "title" => "",
@@ -58,7 +61,7 @@ class HomeController extends Controller
                         "style" => []
                     ];
                     foreach ($tmp as $schedule) {
-                        if ($schedule->dateOfWeek - 1 == $date && $schedule->start == $i) {
+                        if ($schedule->dateOfWeek - 1 == $date->format("w") && $schedule->start == $i && $date->greaterThanOrEqualTo($schedule->from) && $date->lessThanOrEqualTo($schedule->to)) {
                             $schedules[$j][$i] = [
                                 "label" => $schedule->subject_id,
                                 "title" => $schedule->subject->name,
@@ -75,36 +78,39 @@ class HomeController extends Controller
                         }
                     }
                 }
+                $date->addDay();
             }
 
-            $curDate = date("w", $time)*1;
             $nameOfDate = [];
             $tmp = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-            $j = 0;
-            for ($i = $curDate; $i < 7; $i++) {
+            // $j = 0;
+            $curDate = $time->copy();
+            for ($i = $time->format("w"); $i < 7; $i++) {
                 $nameOfDate[$i] = [
                     "title" => $tmp[$i],
-                    "date" => date("Y-m-d", $time + 60*60*24*($j++))
+                    "date" => $curDate->format("Y-m-d")
                 ];
+                $curDate->addDay();
             }
-            for ($i = 0; $i < $curDate; $i++) {
+            for ($i = 0; $i < $time->format("w"); $i++) {
                 $nameOfDate[$i] = [
                     "title" => $tmp[$i],
-                    "date" => date("Y-m-d", $time + 60*60*24*($j++))
+                    "date" => $curDate->format("Y-m-d")
                 ];
+                $curDate->addDay();
             }
 
             return Inertia::render('Home', [
                 'schedules' => fn () => auth()->user()->schedules,
                 'schedule_selected' => fn () => $schedule_selected,
                 'schedule_details' => fn () => $schedules,
-                'date' => $curDate,
+                'date' => $time->format("w")*1,
                 'nameOfDate' => $nameOfDate,
                 'maxADay' => $maxADay,
                 'timeOfEachClassPeriod' => fn () => $schedule_selected->timeOfEachClassPeriod,
-                'day' => date('Y-m-d', $time),
-                'prev_day' => date('Y-m-d', $time - 24*60*60),
-                'next_day' => date('Y-m-d', $time + 24*60*60),
+                'day' => $time->format("Y-m-d"),
+                'prev_day' => $time->copy()->subDay()->format("Y-m-d"),
+                'next_day' => $time->copy()->addDay()->format("Y-m-d"),
                 'today' => date('Y-m-d')
             ]);
         } else {
