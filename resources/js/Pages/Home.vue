@@ -50,8 +50,8 @@ defineProps({
         type: String,
     },
     firstSchedule: {
-        type: Number
-    }
+        type: Number,
+    },
 });
 
 const paddingNumber = (num = 0, length = 1) => {
@@ -134,8 +134,15 @@ const paramRoute = (isFirst, schedule, day = "", today = "") => {
                             v-bind:key="schedule.schedule_id"
                             :href="
                                 route(
-                                    schedule.schedule_id == firstSchedule ? 'home' : 'home.schedule',
-                                    paramRoute(schedule.schedule_id == firstSchedule, schedule, day, today)
+                                    schedule.schedule_id == firstSchedule
+                                        ? 'home'
+                                        : 'home.schedule',
+                                    paramRoute(
+                                        schedule.schedule_id == firstSchedule,
+                                        schedule,
+                                        day,
+                                        today
+                                    )
                                 )
                             "
                             preserve-scroll
@@ -146,7 +153,7 @@ const paramRoute = (isFirst, schedule, day = "", today = "") => {
                 </Dropdown>
             </h2>
         </template>
-        <div class="py-6">
+        <div class="pt-6 pb-4">
             <div
                 class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 sm:space-y-6"
                 v-if="schedules"
@@ -158,8 +165,14 @@ const paramRoute = (isFirst, schedule, day = "", today = "") => {
                         v-if="day != today"
                         :href="
                             route(
-                                firstSchedule == schedule_selected.schedule_id ? 'home' : 'home.schedule',
-                                paramRoute(firstSchedule == schedule_selected.schedule_id, schedule_selected)
+                                firstSchedule == schedule_selected.schedule_id
+                                    ? 'home'
+                                    : 'home.schedule',
+                                paramRoute(
+                                    firstSchedule ==
+                                        schedule_selected.schedule_id,
+                                    schedule_selected
+                                )
                             )
                         "
                         preserve-scroll
@@ -182,9 +195,13 @@ const paramRoute = (isFirst, schedule, day = "", today = "") => {
                         <Link
                             :href="
                                 route(
-                                    firstSchedule == schedule_selected.schedule_id ? 'home' : 'home.schedule',
+                                    firstSchedule ==
+                                        schedule_selected.schedule_id
+                                        ? 'home'
+                                        : 'home.schedule',
                                     paramRoute(
-                                        firstSchedule == schedule_selected.schedule_id,
+                                        firstSchedule ==
+                                            schedule_selected.schedule_id,
                                         schedule_selected,
                                         prev_day
                                     )
@@ -215,9 +232,13 @@ const paramRoute = (isFirst, schedule, day = "", today = "") => {
                                 (event) =>
                                     router.visit(
                                         route(
-                                            firstSchedule == schedule_selected.schedule_id ? 'home' : 'home.schedule',
+                                            firstSchedule ==
+                                                schedule_selected.schedule_id
+                                                ? 'home'
+                                                : 'home.schedule',
                                             paramRoute(
-                                                firstSchedule == schedule_selected.schedule_id,
+                                                firstSchedule ==
+                                                    schedule_selected.schedule_id,
                                                 schedule_selected,
                                                 event.target.value
                                             )
@@ -240,9 +261,13 @@ const paramRoute = (isFirst, schedule, day = "", today = "") => {
                         <Link
                             :href="
                                 route(
-                                    firstSchedule == schedule_selected.schedule_id ? 'home' : 'home.schedule',
+                                    firstSchedule ==
+                                        schedule_selected.schedule_id
+                                        ? 'home'
+                                        : 'home.schedule',
                                     paramRoute(
-                                        firstSchedule == schedule_selected.schedule_id,
+                                        firstSchedule ==
+                                            schedule_selected.schedule_id,
                                         schedule_selected,
                                         next_day
                                     )
@@ -274,7 +299,7 @@ const paramRoute = (isFirst, schedule, day = "", today = "") => {
                     </PrimaryButton>
                 </div>
                 <div class="overflow-x-auto overflow-y-hidden">
-                    <table class="w-full" ref="scheduleTable">
+                    <table ref="scheduleTable" class="w-full mb-2">
                         <tr>
                             <th class="px-6 py-1"></th>
                             <th
@@ -366,7 +391,7 @@ const paramRoute = (isFirst, schedule, day = "", today = "") => {
                                         "
                                     >
                                         <div
-                                            class="absolute z-10 invisible hidden px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 group-hover:visible group-hover:inline-block"
+                                            class="absolute z-10 invisible hidden px-3 py-2 text-xs font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 group-hover:visible group-hover:inline-block"
                                             :class="{
                                                 'left-1/2 -bottom-2 -translate-x-1/2 translate-y-full before:content-[\'\'] before:absolute before:left-1/2 before:bottom-full before:-translate-x-1/2 before:border-8 before:border-x-transparent before:border-t-transparent before:border-b-gray-900':
                                                     m != 1 &&
@@ -396,7 +421,7 @@ const paramRoute = (isFirst, schedule, day = "", today = "") => {
                                         >
                                             {{
                                                 schedule_details[m - 1][n].title
-                                            }}
+                                            }} ({{ timeOfEachClassPeriod[n].start }} - {{ timeOfEachClassPeriod[schedule_details[m - 1][n].rowspan + n - 1].end }})
                                             <br />
                                             -
                                             {{
