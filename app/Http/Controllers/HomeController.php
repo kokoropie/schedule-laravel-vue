@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Schedule;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -10,18 +12,16 @@ use Carbon\Carbon;
 
 class HomeController extends Controller
 {
-    public function index(Request $request, $day = ""): Response | RedirectResponse
+    public function index(Request $request, string $day = ""): Response | RedirectResponse
     {
-        $id = $request->get('id', null);
-        if (!$id) {
-            $schedule_selected = auth()->user()->schedules()->first();
-        } else {
-            if (auth()->user()->schedules()->where("schedule_id", $id)->exists()) {
-                $schedule_selected = auth()->user()->schedules()->where("schedule_id", $id)->first();
-            } else {
-                $schedule_selected = auth()->user()->schedules()->first();
-            }
-        }
+        $schedule_selected = auth()->user()->schedules()->first();
+
+        return $this->schedule($request, $schedule_selected, $day);
+    }
+
+    public function schedule(Request $request, ?Schedule $schedule, string $day = ""): Response | RedirectResponse
+    {
+        $schedule_selected = $schedule;
         if ($schedule_selected) {
             $time = Carbon::today(config("app.timezone", "Asia/Ho_Chi_Minh"));
 
@@ -33,24 +33,24 @@ class HomeController extends Controller
 
             $schedules = [];
             $tmp = $schedule_selected->details()->where(function($query) use ($nextWeek, $time) {
-                $query->whereDate("from", "<=", $time)
-                    ->whereDate("to", ">", $nextWeek);
-            })
-            ->orWhere(function($query) use ($nextWeek, $time) {
-                $query->whereDate('from', ">=", $time)
-                    ->whereDate('from', "<", $nextWeek);
-            })
-            ->orWhere(function($query) use ($nextWeek, $time) {
-                $query->whereDate('to', ">=", $time)
-                    ->whereDate('to', "<", $nextWeek);
+                $query->where(function($query) use ($nextWeek, $time) {
+                    $query->whereDate("from", "<=", $time)
+                        ->whereDate("to", ">", $nextWeek);
+                })
+                ->orWhere(function($query) use ($nextWeek, $time) {
+                    $query->whereDate('from', ">=", $time)
+                        ->whereDate('from', "<", $nextWeek);
+                })
+                ->orWhere(function($query) use ($nextWeek, $time) {
+                    $query->whereDate('to', ">=", $time)
+                        ->whereDate('to', "<", $nextWeek);
+                });
             })->get();
             $maxADay = $schedule_selected->numOfClassPeriodsPerDay;
 
             $date = $time->copy();
             for ($j = 0; $j < 7; ++$j) {
                 $schedules[$j] = [];
-                // $date->addDay();
-                // $date = $time->copy()->addDays($j);
                 for ($i = 1; $i <= $maxADay; $i++) {
                     $schedules[$j][$i] = [
                         "label" => "",
@@ -83,7 +83,6 @@ class HomeController extends Controller
 
             $nameOfDate = [];
             $tmp = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-            // $j = 0;
             $curDate = $time->copy();
             for ($i = $time->format("w"); $i < 7; $i++) {
                 $nameOfDate[$i] = [
@@ -111,7 +110,8 @@ class HomeController extends Controller
                 'day' => $time->format("Y-m-d"),
                 'prev_day' => $time->copy()->subDay()->format("Y-m-d"),
                 'next_day' => $time->copy()->addDay()->format("Y-m-d"),
-                'today' => date('Y-m-d')
+                'today' => date('Y-m-d'),
+                'firstSchedule' => fn () => auth()->user()->schedules()->first()->schedule_id
             ]);
         } else {
             return redirect(route('schedule.index'));
