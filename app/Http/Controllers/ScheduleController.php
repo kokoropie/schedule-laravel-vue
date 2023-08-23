@@ -18,6 +18,8 @@ class ScheduleController extends Controller
      */
     public function index(Request $request): Response | RedirectResponse
     {
+        $this->authorize('viewAny', Schedule::class);
+
         if (auth()->user()->schedules()->count() > 0) {
             return redirect(route('schedule.show', auth()->user()->schedules()->first()));
         }
@@ -49,13 +51,13 @@ class ScheduleController extends Controller
      */
     public function store(StoreRequest $request): RedirectResponse
     {
-        $validated = $request->validated();
+        $this->authorize('create', Schedule::class);
 
-        // dd($validated);
+        $validated = $request->validated();
 
         $new = auth()->user()->schedules()->create($validated);
 
-        return redirect(route('schedule.index', ["id" => $new]));
+        return redirect(route('schedule.show', $new));
     }
 
     /**
@@ -64,24 +66,10 @@ class ScheduleController extends Controller
     public function show(Request $request, Schedule $schedule): Response
     {
         $this->authorize('view', $schedule);
-        // $id = $request->get('id', null);
+
         $sort = strtoupper($request->get('sort', 'DESC'));
         $sort_by = strtolower($request->get('sort_by', 'schedule_detail_id'));
         if ($sort_by == "dateofweek") $sort_by = "dateOfWeek";
-        // if (!$id) {
-        //     $schedule = auth()->user()->schedules()->first();
-        // } else {
-        //     if (Schedule::find($id)) {
-
-        //     } else {
-        //         $this->authorize('viewAny');
-        //     }
-        //     if (auth()->user()->schedules()->where("schedule_id", $id)->exists()) {
-        //         $schedule = auth()->user()->schedules()->where("schedule_id", $id)->first();
-        //     } else {
-        //         $schedule = auth()->user()->schedules()->first();
-        //     }
-        // }
         $details = $schedule->details();
         $total_row = $details->count();
         $limit = $request->get('limit', 20);
@@ -90,6 +78,7 @@ class ScheduleController extends Controller
         if ($page <= 0) $page = 1;
         $total_page = ceil($total_row/$limit);
         if ($page > $total_page) $page = $total_page;
+
         return Inertia::render("Schedule", [
             "schedules" => fn () => auth()->user()->schedules,
             "schedule_selected" => fn () => $schedule,
