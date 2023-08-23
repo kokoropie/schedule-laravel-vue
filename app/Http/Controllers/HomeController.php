@@ -114,7 +114,21 @@ class HomeController extends Controller
                 'firstSchedule' => fn () => auth()->user()->schedules()->first()->schedule_id
             ]);
         } else {
-            return redirect(route('schedule.index'));
+            if (auth()->user()->schedules()->count()) {
+                return abort(404);
+            } else {
+                return redirect(route('schedule.index'))->with("flash", [
+                    "swal" => [
+                        "data" => [
+                            "icon" => "warning",
+                            "title" => "You don't have any schedule",
+                            "text" => "Please add a new schedule.",
+                            "confirmButtonText" => "Add"
+                        ],
+                        "then" => "showModalScheduleNew()"
+                    ]
+                ]);
+            }
         }
     }
 }

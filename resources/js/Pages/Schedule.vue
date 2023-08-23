@@ -9,10 +9,12 @@ import TextInput from '@/Components/TextInput.vue';
 import InputError from '@/Components/InputError.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
-import { ref, watch } from 'vue';
+import { ref, watch, inject } from 'vue';
 import DangerButton from '@/Components/DangerButton.vue';
 
-const { schedule_selected } = defineProps({
+const swal = inject('$swal');
+
+const { schedule_selected, flash } = defineProps({
     schedules: {
         type: Object,
         required: true
@@ -64,15 +66,12 @@ const { schedule_selected } = defineProps({
     page: {
         type: Number,
         default: 1
+    },
+    flash: {
+        type: Object,
+        default: {}
     }
 });
-
-const paddingNumber = (num = 0, length = 1) => {
-    if (`${num}`.length < length) {
-        num = "0".repeat(length - `${num}`.length) + `${num}`;
-    }
-    return `${num}`;
-};
 
 const timeOfEachClassPeriodSFN = ref({});
 const timeOfEachClassPeriodEFN = ref({});
@@ -277,6 +276,14 @@ const submitDelete = () => {
         onSuccess: closeModalDelete,
     });
 };
+
+if (flash) {
+    if (flash.swal) {
+        swal(flash.swal.data).then(() => {
+            eval(flash.swal.then);
+        });
+    }
+}
 
 </script>
 <template>
