@@ -13,6 +13,10 @@ class ScheduleDetail extends Model
     public $timestamps = false;
     protected $fillable = ['subject_id', 'start', 'end', 'from', 'to', 'type', 'dateOfWeek'];
 
+    public function schedule() {
+        return $this->belongsTo(Schedule::class, "schedule_id", "schedule_id");
+    }
+    
     public function subject() {
         return $this->belongsTo(Subject::class, "subject_id", "subject_id");
     }
