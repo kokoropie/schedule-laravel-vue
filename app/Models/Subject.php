@@ -19,7 +19,7 @@ class Subject extends Model
         return $this->belongsTo(Teacher::class, "teacher_id", "teacher_id");
     }
 
-    public function schedule() {
+    public function schedules() {
         return $this->hasMany(ScheduleDetail::class, "subject_id", "subject_id");
     }
 
