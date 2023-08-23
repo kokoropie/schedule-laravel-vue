@@ -18,6 +18,7 @@
         "vue": "^3.2.41"
     },
     "dependencies": {
+        "vue-sweetalert2": "^5.0.5",
         "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.0/xlsx-0.20.0.tgz"
     }
 }
