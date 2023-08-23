@@ -13,7 +13,7 @@ class SchedulePolicy
      */
     public function viewAny(User $user): Response
     {
-        return Response::denyAsNotFound();
+        return Response::allow();
     }
 
     /**
