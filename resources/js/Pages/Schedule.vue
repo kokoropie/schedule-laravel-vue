@@ -9,7 +9,7 @@ import TextInput from '@/Components/TextInput.vue';
 import InputError from '@/Components/InputError.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import DangerButton from '@/Components/DangerButton.vue';
 
 const { schedule_selected } = defineProps({
@@ -64,7 +64,7 @@ const { schedule_selected } = defineProps({
     page: {
         type: Number,
         default: 1
-    },
+    }
 });
 
 const paddingNumber = (num = 0, length = 1) => {
@@ -184,6 +184,13 @@ const formNew = useForm({
 });
 const isShowModalNew = ref(false);
 
+watch(
+    () => formNew.start,
+    async (newStart, oldStart) => {
+        if (newStart >= formNew.end) formNew.end = newStart
+    }
+)
+
 const showModalNew = (schedule = null) => {
     formNew.reset();
     if (schedule) {
@@ -204,7 +211,6 @@ const closeModalNew = () => {
 };
 
 const submitNew = () => {
-    console.log(schedule_selected)
     formNew.post(route('schedule.detail.store', [schedule_selected]), {
         onSuccess: closeModalNew,
     });
@@ -221,6 +227,13 @@ const formEdit = useForm({
 });
 const isShowModalEdit = ref(false);
 const editSchedule = ref(null);
+
+watch(
+    () => formEdit.start,
+    async (newStart, oldStart) => {
+        if (newStart >= formEdit.end) formEdit.end = newStart
+    }
+)
 
 const showModalEdit = (schedule) => {
     editSchedule.value = schedule;
@@ -294,8 +307,7 @@ const submitDelete = () => {
                             class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 dark:text-gray-50 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 transition duration-150 ease-in-out"
                             @click="showModalScheduleNew()">New Schedule</button>
                         <DropdownLink v-for="schedule in schedules" :href="route('schedule.show', schedule)"
-                            preserve-scroll> {{ schedule.name
-                            }}
+                            preserve-scroll v-bind:key="schedule.schedule_id"> {{ schedule.name }}
                         </DropdownLink>
                     </template>
                 </Dropdown>
@@ -488,7 +500,7 @@ const submitDelete = () => {
                         </thead>
                         <tbody>
                             <tr v-for="schedule in schedule_details"
-                                class="even:bg-gray-300 hover:bg-gray-500 hover:text-white">
+                                class="even:bg-gray-300 hover:bg-gray-500 hover:text-white" :key="schedule.schedule_id">
                                 <td class="px-3 py-3 whitespace-nowrap text-center w-auto">{{ schedule.schedule_detail_id }}
                                 </td>
                                 <td class="px-3 md:px-6 py-3 whitespace-nowrap w-full">{{ schedule.subject_id }} - {{
@@ -616,7 +628,7 @@ const submitDelete = () => {
                                 <InputLabel :for="`start-${i}`" value="Start" />
 
                                 <TextInput :id="`start-${i}`" type="time" class="mt-1 block w-full"
-                                    v-model="timeOfEachClassPeriodSFE[i]" required />
+                                    v-model="timeOfEachClassPeriodSFE[i]" />
                                 <InputError class="mt-2"
                                     :message="formScheduleEdit.errors[`timeOfEachClassPeriod.${i}.start`]" />
                             </div>
@@ -700,22 +712,29 @@ const submitDelete = () => {
                         <div>
                             <InputLabel for="start" value="Start" />
 
-                            <TextInput id="start" type="number" class="mt-1 block w-full" v-model="formNew.start" required
-                                min="1" step="1" :max="numOfClassPeriodsPerDay" placeholder="1" />
+                            <select id="start" v-model="formNew.start" required
+                            class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full">
+                                <option v-for="index in numOfClassPeriodsPerDay*1" :key="index" :value="index">
+                                    {{ index }}. {{ timeOfEachClassPeriod[index].start }} - {{ timeOfEachClassPeriod[index].end }}
+                                </option>
+                            </select>
                             <InputError class="mt-2" :message="formNew.errors.start" />
                         </div>
                         <div>
                             <InputLabel for="end" value="End" />
 
-                            <TextInput id="end" type="number" class="mt-1 block w-full" v-model="formNew.end" required
-                                min="1" step="1" :max="numOfClassPeriodsPerDay" placeholder="1" />
+                            <select id="end" v-model="formNew.end" required
+                            class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full">
+                                <option v-for="index in (numOfClassPeriodsPerDay - formNew.start + 1)*1" :key="index + formNew.start - 1" :value="index + formNew.start - 1">
+                                    {{ index + formNew.start - 1 }}. {{ timeOfEachClassPeriod[index + formNew.start - 1].start }} - {{ timeOfEachClassPeriod[index + formNew.start - 1].end }}
+                                </option>
+                            </select>
                             <InputError class="mt-2" :message="formNew.errors.end" />
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <InputLabel for="from" value="From" />
-
                             <TextInput id="from" type="date" class="mt-1 block w-full" v-model="formNew.from" required />
                             <InputError class="mt-2" :message="formNew.errors.from" />
                         </div>
@@ -798,15 +817,23 @@ const submitDelete = () => {
                         <div>
                             <InputLabel for="start" value="Start" />
 
-                            <TextInput id="start" type="number" class="mt-1 block w-full" v-model="formEdit.start" required
-                                min="1" step="1" :max="numOfClassPeriodsPerDay" placeholder="1" />
+                            <select id="start" v-model="formEdit.start" required
+                            class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full">
+                                <option v-for="index in numOfClassPeriodsPerDay*1" :key="index" :value="index">
+                                    {{ index }}. {{ timeOfEachClassPeriod[index].start }} - {{ timeOfEachClassPeriod[index].end }}
+                                </option>
+                            </select>
                             <InputError class="mt-2" :message="formEdit.errors.start" />
                         </div>
                         <div>
                             <InputLabel for="end" value="End" />
 
-                            <TextInput id="end" type="number" class="mt-1 block w-full" v-model="formEdit.end" required
-                                min="1" step="1" :max="numOfClassPeriodsPerDay" placeholder="1" />
+                            <select id="end" v-model="formEdit.end" required
+                            class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full">
+                                <option v-for="index in (numOfClassPeriodsPerDay - formEdit.start + 1)*1" :key="index + formEdit.start - 1" :value="index + formEdit.start - 1">
+                                    {{ index + formEdit.start - 1 }}. {{ timeOfEachClassPeriod[index + formEdit.start - 1].start }} - {{ timeOfEachClassPeriod[index + formEdit.start - 1].end }}
+                                </option>
+                            </select>
                             <InputError class="mt-2" :message="formEdit.errors.end" />
                         </div>
                     </div>
