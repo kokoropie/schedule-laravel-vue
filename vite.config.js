@@ -21,9 +21,14 @@ export default defineConfig({
         sourcemap: 'hidden',
         rollupOptions: {
             output: {
-                entryFileNames: `assets/[name].js`,
+                entryFileNames: `assets/[hash].js`,
                 chunkFileNames: `assets/[hash].js`,
-                assetFileNames: `assets/[hash].[ext]`
+                assetFileNames: `assets/[hash].[ext]`,
+                manualChunks(id) {
+                    if (id.includes('node_modules')) {
+                        return 'vendor';
+                    }
+                }
             }
         }
     }
