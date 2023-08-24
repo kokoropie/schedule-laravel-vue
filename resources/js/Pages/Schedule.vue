@@ -4,6 +4,7 @@ import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import Modal from '@/Components/Modal.vue';
+import Checkbox from '@/Components/Checkbox.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import InputError from '@/Components/InputError.vue';
@@ -179,7 +180,8 @@ const formNew = useForm({
     from: '',
     to: '',
     type: 'OFFLINE',
-    dateOfWeek: 2
+    dateOfWeek: 2,
+    is_makeUp_class: false,
 });
 const isShowModalNew = ref(false);
 
@@ -200,6 +202,7 @@ const showModalNew = (schedule = null) => {
         formNew.to = schedule.to;
         formNew.type = schedule.type;
         formNew.dateOfWeek = schedule.dateOfWeek;
+        formNew.is_makeUp_class = schedule.is_makeUp_class;
     }
     isShowModalNew.value = true;
 };
@@ -222,7 +225,8 @@ const formEdit = useForm({
     from: '',
     to: '',
     type: 'OFFLINE',
-    dateOfWeek: 2
+    dateOfWeek: 2,
+    is_makeUp_class: false,
 });
 const isShowModalEdit = ref(false);
 const editSchedule = ref(null);
@@ -243,6 +247,7 @@ const showModalEdit = (schedule) => {
     formEdit.to = schedule.to;
     formEdit.type = schedule.type;
     formEdit.dateOfWeek = schedule.dateOfWeek;
+    formEdit.is_makeUp_class = schedule.is_makeUp_class;
     isShowModalEdit.value = true;
 };
 
@@ -510,8 +515,10 @@ if (flash) {
                                 class="even:bg-gray-300 hover:bg-gray-500 hover:text-white" :key="schedule.schedule_id">
                                 <td class="px-3 py-3 whitespace-nowrap text-center w-auto">{{ schedule.schedule_detail_id }}
                                 </td>
-                                <td class="px-3 md:px-6 py-3 whitespace-nowrap w-full">{{ schedule.subject_id }} - {{
-                                    schedule.subject.name }}</td>
+                                <td class="px-3 md:px-6 py-3 whitespace-nowrap w-full flex items-center">
+                                    <svg class="mr-2" v-if="schedule.is_makeUp_class" xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><path fill="currentColor" d="M10 8v6l4.7 2.9l.8-1.2l-4-2.4V8z"></path><path fill="currentColor" d="M17.92 12A6.957 6.957 0 0 1 11 20c-3.9 0-7-3.1-7-7s3.1-7 7-7c.7 0 1.37.1 2 .29V4.23c-.64-.15-1.31-.23-2-.23c-5 0-9 4-9 9s4 9 9 9a8.963 8.963 0 0 0 8.94-10h-2.02z"></path><path fill="currentColor" d="M20 5V2h-2v3h-3v2h3v3h2V7h3V5z"></path></svg>
+                                    {{ schedule.subject_id }} - {{ schedule.subject.name }}
+                                </td>
                                 <td class="px-3 md:px-6 py-3 whitespace-nowrap text-right w-auto">{{
                                     timeOfEachClassPeriod[schedule.start].start }}</td>
                                 <td class="px-3 md:px-6 py-3 whitespace-nowrap text-right w-auto">{{
@@ -781,6 +788,13 @@ if (flash) {
                         </select>
                         <InputError class="mt-2" :message="formNew.errors.dateOfWeek" />
                     </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <Checkbox id="is_makeUp_class" v-model="formNew.is_makeUp_class" />
+                            <InputLabel for="is_makeUp_class" value="Is make-up class" />
+                        </div>
+                        <InputError class="mt-2" :message="formNew.errors.is_makeUp_class" :checked="formNew.is_makeUp_class" />
+                    </div>
                 </form>
             </div>
             <div class="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
@@ -886,6 +900,13 @@ if (flash) {
                                 dateName }}</option>
                         </select>
                         <InputError class="mt-2" :message="formEdit.errors.dateOfWeek" />
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <Checkbox id="is_makeUp_class" v-model="formEdit.is_makeUp_class" :checked="formEdit.is_makeUp_class" />
+                            <InputLabel for="is_makeUp_class" value="Is make-up class" />
+                        </div>
+                        <InputError class="mt-2" :message="formEdit.errors.is_makeUp_class" />
                     </div>
                 </form>
             </div>

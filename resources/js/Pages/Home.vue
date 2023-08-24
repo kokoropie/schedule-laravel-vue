@@ -378,12 +378,28 @@ const paramRoute = (isFirst, schedule, day = "", today = "") => {
                                     :style="schedule_details[m - 1][n].style"
                                     :key="m"
                                 >
-                                    {{ schedule_details[m - 1][n].label }}
-                                    <span
-                                        v-if="schedule_details[m - 1][n].onl"
-                                        class="text-xs"
-                                        >(ONL)</span
+                                    <div
+                                        class="flex flex-nowrap items-center justify-center space-x-1"
                                     >
+                                        <span>{{
+                                            schedule_details[m - 1][n].label
+                                        }}</span>
+                                        <span
+                                            v-if="
+                                                schedule_details[m - 1][n].onl
+                                            "
+                                            class="text-xs"
+                                            >(ONL)</span
+                                        >
+                                        <span
+                                            v-if="
+                                                schedule_details[m - 1][n]
+                                                    .is_makeUp_class
+                                            "
+                                            class="text-xs"
+                                            >(make-up)</span
+                                        >
+                                    </div>
                                     <template
                                         v-if="
                                             schedule_details[m - 1][n].title
@@ -421,7 +437,19 @@ const paramRoute = (isFirst, schedule, day = "", today = "") => {
                                         >
                                             {{
                                                 schedule_details[m - 1][n].title
-                                            }} ({{ timeOfEachClassPeriod[n].start }} - {{ timeOfEachClassPeriod[schedule_details[m - 1][n].rowspan + n - 1].end }})
+                                            }}
+                                            ({{
+                                                timeOfEachClassPeriod[n].start
+                                            }}
+                                            -
+                                            {{
+                                                timeOfEachClassPeriod[
+                                                    schedule_details[m - 1][n]
+                                                        .rowspan +
+                                                        n -
+                                                        1
+                                                ].end
+                                            }})
                                             <br />
                                             -
                                             {{

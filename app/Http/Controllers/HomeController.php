@@ -58,7 +58,8 @@ class HomeController extends Controller
                         "rowspan" => 1,
                         "onl" => false,
                         "teacher" => "",
-                        "style" => []
+                        "style" => [],
+                        "is_makeUp_class" => false
                     ];
                     foreach ($tmp as $schedule) {
                         if ($schedule->dateOfWeek - 1 == $date->format("w") && $schedule->start == $i && $date->greaterThanOrEqualTo($schedule->from) && $date->lessThanOrEqualTo($schedule->to)) {
@@ -71,7 +72,8 @@ class HomeController extends Controller
                                 "style" => [
                                     "color" => $schedule->subject->color_foreground,
                                     "background" => $schedule->subject->color_background
-                                ]
+                                ],
+                                "is_makeUp_class" => $schedule->is_makeUp_class
                             ];
                             $i = $schedule->end;
                             break;
