@@ -416,7 +416,7 @@ if (flash) {
 									})
 								"
 								preserve-scroll
-								v-bind:key="limit"
+								:key="limit"
 								:only="['schedule_details', 'sort', 'sort_by']"
 								>{{ limit }}</DropdownLink
 							>
