@@ -8,7 +8,7 @@ const props = defineProps({
     },
     width: {
         type: String,
-        default: '48',
+        default: 'full',
     },
     contentClasses: {
         type: String,
@@ -26,9 +26,15 @@ onMounted(() => document.addEventListener('keydown', closeOnEscape));
 onUnmounted(() => document.removeEventListener('keydown', closeOnEscape));
 
 const widthClass = computed(() => {
-    return {
+    const initWidthClass = {
         48: 'w-48',
-    }[props.width.toString()];
+        'auto': 'w-auto',
+        'max': 'w-max',
+        'min': 'w-min',
+        'full': 'w-full'
+    };
+    if (!initWidthClass[props.width.toString()]) return `w-[${props.width.toString()}px]`;
+    return initWidthClass[props.width.toString()];
 });
 
 const alignmentClasses = computed(() => {
