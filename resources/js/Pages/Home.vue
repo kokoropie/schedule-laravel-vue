@@ -5,10 +5,10 @@ import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link, router } from "@inertiajs/vue3";
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import XLSX from "xlsx";
 
-defineProps({
+const { today, prev_day, next_day, schedule_selected, firstSchedule } = defineProps({
     schedules: {
         type: Object,
         required: true,
@@ -26,7 +26,7 @@ defineProps({
         required: true,
     },
     nameOfDate: {
-        type: Array,
+        type: Object,
         required: true,
     },
     maxADay: {
@@ -53,6 +53,63 @@ defineProps({
         type: Number,
     },
 });
+
+const isLoading = ref(false)
+const changeDay = (day) => {
+    if (!isLoading.value) {
+        isLoading.value = true;
+        router.visit(
+            route(
+                firstSchedule == schedule_selected.schedule_id ? 'home' : 'home.schedule',
+                paramRoute(
+                    firstSchedule == schedule_selected.schedule_id,
+                    schedule_selected,
+                    day
+                )
+            ),
+            {
+                preserveScroll: true,
+                preserveState: true,
+                only: [
+                    'date',
+                    'day',
+                    'today',
+                    'nameOfDate',
+                    'next_day',
+                    'prev_day',
+                    'schedule_details',
+                ],
+                onFinish() {
+                    isLoading.value = false;
+                }
+            }
+        )
+    }
+}
+
+const keyUp = (event) => {
+    switch (event.code) {
+        case "ArrowLeft":
+            event.preventDefault();
+            if (event.target.tagName != "INPUT")
+                changeDay(prev_day);
+            break;
+
+        case "ArrowRight":
+            event.preventDefault();
+            if (event.target.tagName != "INPUT")
+                changeDay(next_day);
+            break;
+    }
+}
+
+onMounted(() => {
+    window.addEventListener('keyup', keyUp);
+})
+
+onUnmounted(() => {
+    window.removeEventListener('keyup', keyUp)
+})
 
 const paddingNumber = (num = 0, length = 1) => {
     if (`${num}`.length < length) {
@@ -161,136 +218,21 @@ const paramRoute = (isFirst, schedule, day = "", today = "") => {
                 <div
                     class="flex flex-wrap flex-col xs:flex-row relative justify-center items-center text-center"
                 >
-                    <Link
-                        v-if="day != today"
-                        :href="
-                            route(
-                                firstSchedule == schedule_selected.schedule_id
-                                    ? 'home'
-                                    : 'home.schedule',
-                                paramRoute(
-                                    firstSchedule ==
-                                        schedule_selected.schedule_id,
-                                    schedule_selected
-                                )
-                            )
-                        "
-                        preserve-scroll
-                        :only="[
-                            'date',
-                            'day',
-                            'today',
-                            'nameOfDate',
-                            'next_day',
-                            'prev_day',
-                            'schedule_details',
-                        ]"
-                        class="sm:absolute left-0 mt-2"
-                    >
-                        <PrimaryButton>Today</PrimaryButton>
-                    </Link>
-                    <div
-                        class="flex flex-wrap flex-col xs:flex-row justify-center items-center space-y-2 xs:space-y-0 xs:space-x-3 text-center order-1 mt-2 mx-3"
-                    >
-                        <Link
-                            :href="
-                                route(
-                                    firstSchedule ==
-                                        schedule_selected.schedule_id
-                                        ? 'home'
-                                        : 'home.schedule',
-                                    paramRoute(
-                                        firstSchedule ==
-                                            schedule_selected.schedule_id,
-                                        schedule_selected,
-                                        prev_day
-                                    )
-                                )
-                            "
-                            preserve-scroll
-                            :only="[
-                                'date',
-                                'day',
-                                'today',
-                                'nameOfDate',
-                                'next_day',
-                                'prev_day',
-                                'schedule_details',
-                            ]"
-                        >
-                            <PrimaryButton class="hidden sm:block"
-                                >Prev</PrimaryButton
-                            >
-                            <PrimaryButton class="block sm:hidden">{{
-                                "<"
-                            }}</PrimaryButton>
-                        </Link>
+                    <PrimaryButton @click="changeDay(today)" class="sm:absolute left-0 mt-2">Today</PrimaryButton>
+                    <div class="flex flex-wrap flex-col xs:flex-row justify-center items-center space-y-2 xs:space-y-0 xs:space-x-3 text-center order-1 mt-2 mx-3">
+                        <PrimaryButton @click="changeDay(prev_day)">
+                            <span class="hidden sm:block">Prev</span>
+                            <span class="block sm:hidden">{{ '<' }}</span>
+                        </PrimaryButton>
                         <TextInput
-                            :value="day"
+                            :model-value="day"
                             type="date"
-                            @change="
-                                (event) =>
-                                    router.visit(
-                                        route(
-                                            firstSchedule ==
-                                                schedule_selected.schedule_id
-                                                ? 'home'
-                                                : 'home.schedule',
-                                            paramRoute(
-                                                firstSchedule ==
-                                                    schedule_selected.schedule_id,
-                                                schedule_selected,
-                                                event.target.value
-                                            )
-                                        ),
-                                        {
-                                            preserveScroll: true,
-                                            only: [
-                                                'date',
-                                                'day',
-                                                'today',
-                                                'nameOfDate',
-                                                'next_day',
-                                                'prev_day',
-                                                'schedule_details',
-                                            ],
-                                        }
-                                    )
-                            "
+                            @change="event => changeDay(event.target.value)"
                         />
-                        <Link
-                            :href="
-                                route(
-                                    firstSchedule ==
-                                        schedule_selected.schedule_id
-                                        ? 'home'
-                                        : 'home.schedule',
-                                    paramRoute(
-                                        firstSchedule ==
-                                            schedule_selected.schedule_id,
-                                        schedule_selected,
-                                        next_day
-                                    )
-                                )
-                            "
-                            preserve-scroll
-                            :only="[
-                                'date',
-                                'day',
-                                'today',
-                                'nameOfDate',
-                                'next_day',
-                                'prev_day',
-                                'schedule_details',
-                            ]"
-                        >
-                            <PrimaryButton class="hidden sm:block"
-                                >Next</PrimaryButton
-                            >
-                            <PrimaryButton class="block sm:hidden">{{
-                                ">"
-                            }}</PrimaryButton>
-                        </Link>
+                        <PrimaryButton @click="changeDay(next_day)">
+                            <span class="hidden sm:block">Next</span>
+                            <span class="block sm:hidden">{{ '>' }}</span>
+                        </PrimaryButton>
                     </div>
                     <PrimaryButton
                         class="sm:absolute right-0 mt-2 xs:ml-3"
