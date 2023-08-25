@@ -155,7 +155,7 @@ const submitDelete = () => {
 									})
 								"
 								preserve-scroll
-								v-bind:key="limit"
+								:key="limit"
 								:only="['subjects', 'sort', 'sort_by']">
 								{{ limit }}
 							</DropdownLink>
@@ -205,7 +205,7 @@ const submitDelete = () => {
 										:href="
 											route('subject.index', {
 												sort: sort_by.toLowerCase() == 'subject_id' ? (sort.toUpperCase() == 'DESC' ? 'ASC' : 'DESC') : 'ASC',
-												limit: limit,
+												limit: subjects.per_page,
 												page: subjects.current_page,
 											})
 										"
@@ -241,7 +241,7 @@ const submitDelete = () => {
 											route('subject.index', {
 												sort: sort_by.toLowerCase() == 'name' ? (sort.toUpperCase() == 'DESC' ? 'ASC' : 'DESC') : 'ASC',
 												sort_by: 'name',
-												limit: limit,
+												limit: subjects.per_page,
 												page: subjects.current_page,
 											})
 										"
@@ -278,7 +278,7 @@ const submitDelete = () => {
 											route('subject.index', {
 												sort: sort_by.toLowerCase() == 'credits' ? (sort.toUpperCase() == 'DESC' ? 'ASC' : 'DESC') : 'ASC',
 												sort_by: 'credits',
-												limit: limit,
+												limit: subjects.per_page,
 												page: subjects.current_page,
 											})
 										"
