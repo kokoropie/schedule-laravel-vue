@@ -154,6 +154,7 @@ const submitDelete = () => {
 										limit: limit,
 									})
 								"
+                                replace
 								preserve-scroll
 								:key="limit"
 								:only="['subjects', 'sort', 'sort_by']">
@@ -170,6 +171,7 @@ const submitDelete = () => {
 							<li v-if="link.active || (subjects.current_page == 1 && index == 3) || (subjects.current_page == subjects.last_page && index == subjects.links.length - 4) || (!link.active && link.label != '...' && (index == 0 || index == subjects.links.length - 1 || link.url == subjects.next_page_url || link.url == subjects.prev_page_url))">
 								<Link
 									:href="link.url"
+                                    replace
 									class="flex items-center justify-center px-3 h-[2.5rem] min-w-[2.5rem] leading-tight"
 									:class="{
 										'text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white': !link.active,
@@ -209,6 +211,7 @@ const submitDelete = () => {
 												page: subjects.current_page,
 											})
 										"
+                                        replace
 										preserve-scroll
 										class="flex items-center space-x-1 justify-center"
 										:only="['subjects', 'sort', 'sort_by']">
@@ -245,6 +248,7 @@ const submitDelete = () => {
 												page: subjects.current_page,
 											})
 										"
+                                        replace
 										preserve-scroll
 										class="flex items-center space-x-1"
 										:only="['subjects', 'sort', 'sort_by']">
@@ -282,6 +286,7 @@ const submitDelete = () => {
 												page: subjects.current_page,
 											})
 										"
+                                        replace
 										preserve-scroll
 										class="flex items-center space-x-1"
 										:only="['subjects', 'sort', 'sort_by']">
@@ -365,6 +370,7 @@ const submitDelete = () => {
 										'rounded-l-lg': index == 0,
 										'rounded-r-lg': index == subjects.links.length - 1,
 									}"
+                                    replace
 									:only="['subjects', 'sort', 'sort_by']"
 									v-if="!link.active && link.url"
 									>{{ index == 0 ? "<" : index == subjects.links.length - 1 ? ">" : link.label }}</Link

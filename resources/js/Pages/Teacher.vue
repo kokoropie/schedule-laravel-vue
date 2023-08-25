@@ -135,6 +135,7 @@ const submitDelete = () => {
 										limit: limit,
 									})
 								"
+                                replace
 								preserve-scroll
 								:key="limit"
 								:only="['teachers', 'sort', 'sort_by']">
@@ -190,6 +191,7 @@ const submitDelete = () => {
 												page: teachers.current_page,
 											})
 										"
+                                        replace
 										preserve-scroll
 										class="flex items-center space-x-1 justify-center"
 										:only="['teachers', 'sort', 'sort_by']">
@@ -226,6 +228,7 @@ const submitDelete = () => {
 												page: teachers.current_page,
 											})
 										"
+                                        replace
 										preserve-scroll
 										class="flex items-center space-x-1"
 										:only="['teachers', 'sort', 'sort_by']">
@@ -262,6 +265,7 @@ const submitDelete = () => {
 												page: teachers.current_page,
 											})
 										"
+                                        replace
 										preserve-scroll
 										class="flex items-center space-x-1"
 										:only="['teachers', 'sort', 'sort_by']">

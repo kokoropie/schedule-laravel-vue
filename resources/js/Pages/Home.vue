@@ -81,7 +81,8 @@ const changeDay = (day) => {
                 ],
                 onFinish() {
                     isLoading.value = false;
-                }
+                },
+                replace: true
             }
         )
     }

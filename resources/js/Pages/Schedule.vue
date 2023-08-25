@@ -325,7 +325,8 @@ if (flash) {
 						<DropdownLink
 							v-for="schedule in schedules"
 							:href="route('schedule.show', schedule)"
-							preserve-scroll
+                            replace
+                            preserve-scroll
 							v-bind:key="schedule.schedule_id"
 							:only="['schedule_details']"
 							>{{ schedule.name }}</DropdownLink
@@ -415,6 +416,7 @@ if (flash) {
 										limit: limit,
 									})
 								"
+                                replace
 								preserve-scroll
 								:key="limit"
 								:only="['schedule_details', 'sort', 'sort_by']"
@@ -431,6 +433,8 @@ if (flash) {
 							<li v-if="link.active || (schedule_details.current_page == 1 && index == 3) || (schedule_details.current_page == schedule_details.last_page && index == schedule_details.links.length - 4) || (!link.active && link.label != '...' && (index == 0 || index == schedule_details.links.length - 1 || link.url == schedule_details.next_page_url || link.url == schedule_details.prev_page_url))">
 								<Link
 									:href="link.url"
+                                    replace
+                                    preserve-scroll
 									class="flex items-center justify-center px-3 h-[2.5rem] min-w-[2.5rem] leading-tight"
 									:class="{
 										'text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white': !link.active,
@@ -471,6 +475,8 @@ if (flash) {
 												page: schedule_details.current_page,
 											})
 										"
+                                        replace
+                                        preserve-scroll
 										class="flex items-center space-x-1 justify-center"
 										:only="['schedule_details', 'sort', 'sort_by']">
 										<span>#</span>
@@ -507,7 +513,8 @@ if (flash) {
 												page: schedule_details.current_page,
 											})
 										"
-										preserve-scroll
+                                        replace
+                                        preserve-scroll
 										class="flex items-center space-x-1"
 										:only="['schedule_details', 'sort', 'sort_by']">
 										<span>Subject</span>
@@ -544,7 +551,8 @@ if (flash) {
 												page: schedule_details.current_page,
 											})
 										"
-										preserve-scroll
+                                        replace
+                                        preserve-scroll
 										class="flex items-center space-x-1 justify-end"
 										:only="['schedule_details', 'sort', 'sort_by']">
 										<svg
@@ -573,7 +581,8 @@ if (flash) {
 								<th class="px-3 md:px-6 py-3 whitespace-nowrap text-right w-auto">
 									<Link
 										class="flex items-center space-x-1 justify-end"
-										preserve-scroll
+                                        replace
+                                        preserve-scroll
 										:href="
 											route('schedule.show', {
 												sort: sort_by.toLowerCase() == 'end' ? (sort.toUpperCase() == 'DESC' ? 'ASC' : 'DESC') : 'ASC',
@@ -610,7 +619,8 @@ if (flash) {
 								<th class="px-3 md:px-6 py-3 whitespace-nowrap text-right w-auto">
 									<Link
 										class="flex items-center space-x-1 justify-end"
-										preserve-scroll
+                                        replace
+                                        preserve-scroll
 										:href="
 											route('schedule.show', {
 												sort: sort_by.toLowerCase() == 'from' ? (sort.toUpperCase() == 'DESC' ? 'ASC' : 'DESC') : 'ASC',
@@ -647,7 +657,8 @@ if (flash) {
 								<th class="px-3 md:px-6 py-3 whitespace-nowrap text-right w-auto">
 									<Link
 										class="flex items-center space-x-1 justify-end"
-										preserve-scroll
+                                        replace
+                                        preserve-scroll
 										:href="
 											route('schedule.show', {
 												sort: sort_by.toLowerCase() == 'to' ? (sort.toUpperCase() == 'DESC' ? 'ASC' : 'DESC') : 'ASC',
@@ -684,7 +695,8 @@ if (flash) {
 								<th class="px-3 md:px-6 py-3 whitespace-nowrap w-auto">
 									<Link
 										class="flex items-center space-x-1 justify-center"
-										preserve-scroll
+                                        replace
+                                        preserve-scroll
 										:href="
 											route('schedule.show', {
 												sort: sort_by.toLowerCase() == 'type' ? (sort.toUpperCase() == 'DESC' ? 'ASC' : 'DESC') : 'ASC',
@@ -721,7 +733,8 @@ if (flash) {
 								<th class="px-3 md:px-6 py-3 whitespace-nowrap text-left w-auto">
 									<Link
 										class="flex items-center space-x-1"
-										preserve-scroll
+                                        replace
+                                        preserve-scroll
 										:href="
 											route('schedule.show', {
 												sort: sort_by.toLowerCase() == 'dateofweek' ? (sort.toUpperCase() == 'DESC' ? 'ASC' : 'DESC') : 'ASC',
@@ -844,6 +857,8 @@ if (flash) {
 										'rounded-r-lg': index == schedule_details.links.length - 1,
 									}"
 									:href="link.url"
+                                    replace
+                                    preserve-scroll
 									:only="['schedule_details', 'sort', 'sort_by']"
 									>{{ index == 0 ? "<" : index == schedule_details.links.length - 1 ? ">" : link.label }}</Link
 								>
