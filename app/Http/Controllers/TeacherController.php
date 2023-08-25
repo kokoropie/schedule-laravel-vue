@@ -21,8 +21,10 @@ class TeacherController extends Controller
 
         $sort = strtoupper($request->get('sort', 'ASC'));
         $sort_by = strtolower($request->get('sort_by', 'teacher_id'));
+        $limit = $request->get('limit', 10);
+        if ($limit <= 0) $limit = 10;
         return Inertia::render("Teacher", [
-            "teachers" => fn () => auth()->user()->teachers()->OrderBy($sort_by, $sort)->withCount(['subjects'])->get(),
+            "teachers" => fn () => auth()->user()->teachers()->OrderBy($sort_by, $sort)->withCount(['subjects'])->paginate($limit)->onEachSide(2)->withQueryString(),
             "sort" => $sort,
             "sort_by" => $sort_by,
         ]);

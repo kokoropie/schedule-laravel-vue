@@ -71,26 +71,18 @@ class ScheduleController extends Controller
         $sort_by = strtolower($request->get('sort_by', 'schedule_detail_id'));
         if ($sort_by == "dateofweek") $sort_by = "dateOfWeek";
         $details = $schedule->details();
-        $total_row = $details->count();
-        $limit = $request->get('limit', 20);
-        if ($limit <= 0) $limit = 20;
-        $page = $request->get('page', 1);
-        if ($page <= 0) $page = 1;
-        $total_page = ceil($total_row/$limit);
-        if ($page > $total_page) $page = $total_page;
+        $limit = $request->get('limit', 10);
+        if ($limit <= 0) $limit = 10;
 
         return Inertia::render("Schedule", [
             "schedules" => fn () => auth()->user()->schedules,
             "schedule_selected" => fn () => $schedule,
-            "schedule_details" => fn () => $details->OrderBy($sort_by, $sort)->limit($limit)->skip(($page-1)*$limit)->get()->load(["subject"]),
             "subjects" => fn () => auth()->user()->subjects,
             "numOfClassPeriodsPerDay" => fn () => $schedule->numOfClassPeriodsPerDay,
             'timeOfEachClassPeriod' => fn () => $schedule->timeOfEachClassPeriod,
-            "limit" => $limit,
-            "page" => $page,
-            "total_page" => $total_page,
             "sort" => $sort,
             "sort_by" => $sort_by,
+            "schedule_details" => fn () => $details->OrderBy($sort_by, $sort)->paginate($limit)->onEachSide(2)->withQueryString()
         ]);
     }
 

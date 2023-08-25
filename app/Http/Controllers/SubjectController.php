@@ -21,8 +21,10 @@ class SubjectController extends Controller
 
         $sort = strtoupper($request->get('sort', 'ASC'));
         $sort_by = strtolower($request->get('sort_by', 'subject_id'));
+        $limit = $request->get('limit', 10);
+        if ($limit <= 0) $limit = 10;
         return Inertia::render("Subject", [
-            "subjects" => fn () => auth()->user()->subjects()->OrderBy($sort_by, $sort)->get()->load(['teacher']),
+            "subjects" => fn () => auth()->user()->subjects()->OrderBy($sort_by, $sort)->paginate($limit)->onEachSide(2)->withQueryString(),
             "teachers" => fn () => auth()->user()->teachers,
             "sort" => $sort,
             "sort_by" => $sort_by,
