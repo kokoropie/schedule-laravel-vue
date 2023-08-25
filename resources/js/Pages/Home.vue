@@ -102,7 +102,7 @@ const paramRoute = (isFirst, schedule, day = "", today = "") => {
     <AuthenticatedLayout>
         <template #header>
             <h2
-                class="font-semibold text-xl text-gray-800 dark:text-gray-100 leading-tight flex items-center"
+                class="font-semibold text-xl text-gray-800 dark:text-gray-100 leading-tight flex items-center flex-wrap"
                 v-if="schedules.length > 0"
             >
                 <span class="mr-auto">{{ schedule_selected.name }}</span>
