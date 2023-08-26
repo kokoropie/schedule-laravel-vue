@@ -14,7 +14,8 @@ class ScheduleDetail extends Model
     protected $fillable = ['subject_id', 'start', 'end', 'from', 'to', 'type', 'dateOfWeek', 'is_makeUp_class'];
 
     protected $casts = [
-        'is_makeUp_class' => 'boolean'
+        'is_makeUp_class' => 'boolean',
+        'dateOfWeek' => 'array',
     ];
 
     public function schedule() {

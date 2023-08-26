@@ -62,7 +62,7 @@ class HomeController extends Controller
                         "is_makeUp_class" => false
                     ];
                     foreach ($tmp as $schedule) {
-                        if ($schedule->dateOfWeek - 1 == $date->format("w") && $schedule->start == $i && $date->greaterThanOrEqualTo($schedule->from) && $date->lessThanOrEqualTo($schedule->to)) {
+                        if (in_array($date->format("w")+1, $schedule->dateOfWeek) && $schedule->start == $i && $date->greaterThanOrEqualTo($schedule->from) && $date->lessThanOrEqualTo($schedule->to)) {
                             $schedules[$j][$i] = [
                                 "label" => $schedule->subject_id,
                                 "title" => $schedule->subject->name,

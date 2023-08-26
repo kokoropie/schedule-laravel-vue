@@ -15,7 +15,7 @@ import DangerButton from "@/Components/DangerButton.vue";
 
 const swal = inject("$swal");
 
-const {schedule_selected, flash} = defineProps({
+const {schedule_selected, flash, schedule_details} = defineProps({
 	schedules: {
 		type: Object,
 		required: true,
@@ -80,6 +80,7 @@ const formScheduleNew = useForm({
 const isShowModalScheduleNew = ref(false);
 
 const showModalScheduleNew = (schedule = null) => {
+    formScheduleNew.clearErrors();
 	formScheduleNew.reset();
 	timeOfEachClassPeriodSFN.value = {};
 	timeOfEachClassPeriodEFN.value = {};
@@ -96,6 +97,7 @@ const showModalScheduleNew = (schedule = null) => {
 
 const closeModalScheduleNew = () => {
 	isShowModalScheduleNew.value = false;
+    formScheduleNew.clearErrors();
 	formScheduleNew.reset();
 };
 
@@ -123,6 +125,8 @@ const formScheduleEdit = useForm({
 const isShowModalScheduleEdit = ref(false);
 
 const showModalScheduleEdit = () => {
+    formScheduleEdit.clearErrors();
+	formScheduleEdit.reset();
 	timeOfEachClassPeriodSFE.value = {};
 	timeOfEachClassPeriodEFE.value = {};
 	formScheduleEdit.name = schedule_selected.name;
@@ -136,6 +140,7 @@ const showModalScheduleEdit = () => {
 
 const closeModalScheduleEdit = () => {
 	isShowModalScheduleEdit.value = false;
+    formScheduleEdit.clearErrors();
 	formScheduleEdit.reset();
 };
 
@@ -176,7 +181,7 @@ const formDetailNew = useForm({
 	from: "",
 	to: "",
 	type: "OFFLINE",
-	dateOfWeek: 2,
+	dateOfWeek: [2],
 	is_makeUp_class: false,
 });
 const isShowModalDetailNew = ref(false);
@@ -189,6 +194,7 @@ watch(
 );
 
 const showModalDetailNew = (detail = null) => {
+    formDetailNew.clearErrors();
 	formDetailNew.reset();
 	if (detail) {
 		formDetailNew.subject_id = detail.subject_id;
@@ -205,6 +211,7 @@ const showModalDetailNew = (detail = null) => {
 
 const closeModalDetailNew = () => {
 	isShowModalDetailNew.value = false;
+    formDetailNew.clearErrors();
 	formDetailNew.reset();
 };
 
@@ -235,6 +242,8 @@ watch(
 );
 
 const showModalDetailEdit = (detail) => {
+    formDetailEdit.clearErrors();
+    formDetailEdit.reset();
 	editDetail.value = detail;
 	formDetailEdit.subject_id = detail.subject_id;
 	formDetailEdit.start = detail.start;
@@ -249,6 +258,7 @@ const showModalDetailEdit = (detail) => {
 
 const closeModalDetailEdit = () => {
 	isShowModalDetailEdit.value = false;
+    formDetailEdit.clearErrors();
 	formDetailEdit.reset();
 	editDetail.value = null;
 };
@@ -731,42 +741,7 @@ if (flash) {
 									</Link>
 								</th>
 								<th class="px-3 md:px-6 py-3 whitespace-nowrap text-left w-auto">
-									<Link
-										class="flex items-center space-x-1"
-                                        replace
-                                        preserve-scroll
-										:href="
-											route('schedule.show', {
-												sort: sort_by.toLowerCase() == 'dateofweek' ? (sort.toUpperCase() == 'DESC' ? 'ASC' : 'DESC') : 'ASC',
-												sort_by: 'dateOfWeek',
-												schedule: schedule_selected,
-												limit: schedule_details.per_page,
-												page: schedule_details.current_page,
-											})
-										"
-										:only="['schedule_details', 'sort', 'sort_by']">
-										<span>Date</span>
-										<svg
-											height="1em"
-											viewBox="0 0 24 24"
-											width="1em"
-											xmlns="http://www.w3.org/2000/svg"
-											v-if="sort.toUpperCase() == 'ASC' && sort_by.toLowerCase() == 'dateofweek'">
-											<path
-												d="m7 14l5-5l5 5z"
-												fill="currentColor" />
-										</svg>
-										<svg
-											height="1em"
-											viewBox="0 0 24 24"
-											width="1em"
-											xmlns="http://www.w3.org/2000/svg"
-											v-if="sort.toUpperCase() == 'DESC' && sort_by.toLowerCase() == 'dateofweek'">
-											<path
-												d="m7 10l5 5l5-5z"
-												fill="currentColor" />
-										</svg>
-									</Link>
+                                    <span>Date</span>
 								</th>
 								<th></th>
 							</tr>
@@ -816,7 +791,7 @@ if (flash) {
 									{{ schedule.type }}
 								</td>
 								<td class="px-3 md:px-6 py-3 whitespace-nowrap text-left w-auto">
-									{{ dateOfWeek[schedule.dateOfWeek] }}
+									{{ schedule.dateOfWeek.map(v => dateOfWeek[v]).join(", ") }}
 								</td>
 								<td class="px-3 md:px-6 py-1 whitespace-nowrap text-center space-x-2">
 									<SecondaryButton
@@ -1322,12 +1297,14 @@ if (flash) {
 					<div>
 						<InputLabel
 							for="dateOfWeek"
-							value="Date" />
+							value="Date (hold Ctrl for multiple select)" />
 						<select
 							class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full"
 							id="dateOfWeek"
 							required
-							v-model="formDetailNew.dateOfWeek">
+							v-model="formDetailNew.dateOfWeek"
+                            multiple
+                            size="3">
 							<option
 								v-for="(dateName, dateValue) in dateOfWeek"
 								:key="dateValue"
@@ -1338,12 +1315,18 @@ if (flash) {
 						<InputError
 							class="mt-2"
 							:message="formDetailNew.errors.dateOfWeek" />
+                        <InputError
+                            class="mt-2"
+                            v-for="key in Object.keys(formDetailNew.errors).filter(v => v.indexOf('dateOfWeek.') > -1)"
+                            :key="key"
+                            :message="formDetailNew.errors[key]" />
 					</div>
 					<div>
 						<div class="flex items-center space-x-2">
 							<Checkbox
 								id="is_makeUp_class"
-								v-model="formDetailNew.is_makeUp_class" />
+								v-model="formDetailNew.is_makeUp_class"
+                                :checked="formDetailNew.is_makeUp_class" />
 							<InputLabel
 								for="is_makeUp_class"
 								value="Is make-up class" />
@@ -1532,12 +1515,14 @@ if (flash) {
 					<div>
 						<InputLabel
 							for="dateOfWeek"
-							value="Date" />
+							value="Date (hold Ctrl for multiple select)" />
 						<select
 							class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full"
 							id="dateOfWeek"
 							required
-							v-model="formDetailEdit.dateOfWeek">
+							v-model="formDetailEdit.dateOfWeek"
+                            multiple
+                            size="3">
 							<option
 								v-for="(dateName, dateValue) in dateOfWeek"
 								:key="dateValue"
@@ -1548,6 +1533,11 @@ if (flash) {
 						<InputError
 							class="mt-2"
 							:message="formDetailEdit.errors.dateOfWeek" />
+                        <InputError
+                            class="mt-2"
+                            v-for="key in Object.keys(formDetailEdit.errors).filter(v => v.indexOf('dateOfWeek.') > -1)"
+                            :key="key"
+                            :message="formDetailEdit.errors[key]" />
 					</div>
 					<div>
 						<div class="flex items-center space-x-2">

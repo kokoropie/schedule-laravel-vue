@@ -29,7 +29,8 @@ class StoreRequest extends FormRequest
             'from' => 'required|date',
             'to' => 'required|date|after_or_equal:from',
             'type' => 'required|in:OFFLINE,ONLINE',
-            'dateOfWeek' => 'required|numeric|min:1|max:7',
+            'dateOfWeek' => 'required|array',
+            'dateOfWeek.*' => 'numeric|in:1,2,3,4,5,6,7',
             'is_makeUp_class' => 'boolean'
         ];
     }
@@ -60,9 +61,9 @@ class StoreRequest extends FormRequest
             'type.required' => 'Please choose type to study',
             'type.in' => 'Please choose type to study',
             'dateOfWeek.required' => 'Please choose date of week',
-            'dateOfWeek.numeric' => 'Please choose date of week',
-            'dateOfWeek.min' => 'Please choose date of week',
-            'dateOfWeek.max' => 'Please choose date of week',
+            'dateOfWeek.array' => 'Please choose date of week',
+            'dateOfWeek.*.numeric' => 'Date doen\'t exist',
+            'dateOfWeek.*.in' => 'Date doen\'t exist',
             'is_makeUp_class.boolean' => 'Is make-up class much be a checkbox value.',
         ];
     }
