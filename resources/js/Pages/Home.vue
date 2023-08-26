@@ -4,11 +4,11 @@ import TextInput from "@/Components/TextInput.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head, Link, router } from "@inertiajs/vue3";
-import { ref, onMounted, onUnmounted } from "vue";
+import { Head, router, usePage } from "@inertiajs/vue3";
+import { ref, onMounted, onUnmounted, watch } from "vue";
 import XLSX from "xlsx";
 
-const { today, prev_day, next_day, schedule_selected, firstSchedule } = defineProps({
+defineProps({
     schedules: {
         type: Object,
         required: true,
@@ -53,17 +53,16 @@ const { today, prev_day, next_day, schedule_selected, firstSchedule } = definePr
         type: Number,
     },
 });
-
 const isLoading = ref(false)
 const changeDay = (day) => {
     if (!isLoading.value) {
         isLoading.value = true;
         router.visit(
             route(
-                firstSchedule == schedule_selected.schedule_id ? 'home' : 'home.schedule',
+                usePage().props.firstSchedule == usePage().props.schedule_selected.schedule_id ? 'home' : 'home.schedule',
                 paramRoute(
-                    firstSchedule == schedule_selected.schedule_id,
-                    schedule_selected,
+                    usePage().props.firstSchedule == usePage().props.schedule_selected.schedule_id,
+                    usePage().props.schedule_selected,
                     day
                 )
             ),
@@ -93,13 +92,13 @@ const keyUp = (event) => {
         case "ArrowLeft":
             event.preventDefault();
             if (event.target.tagName != "INPUT")
-                changeDay(prev_day);
+                changeDay(usePage().props.prev_day);
             break;
 
         case "ArrowRight":
             event.preventDefault();
             if (event.target.tagName != "INPUT")
-                changeDay(next_day);
+                changeDay(usePage().props.next_day);
             break;
     }
 }
