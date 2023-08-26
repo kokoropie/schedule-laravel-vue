@@ -63,7 +63,8 @@ const changeDay = (day) => {
                 paramRoute(
                     usePage().props.firstSchedule == usePage().props.schedule_selected.schedule_id,
                     usePage().props.schedule_selected,
-                    day
+                    day,
+                    usePage().props.today
                 )
             ),
             {
@@ -218,7 +219,7 @@ const paramRoute = (isFirst, schedule, day = "", today = "") => {
                 <div
                     class="flex flex-wrap flex-col xs:flex-row relative justify-center items-center text-center"
                 >
-                    <PrimaryButton @click="changeDay(today)" class="sm:absolute left-0 mt-2">Today</PrimaryButton>
+                    <PrimaryButton @click="changeDay(today)" class="sm:absolute left-0 mt-2" v-if="today !== day">Today</PrimaryButton>
                     <div class="flex flex-wrap flex-col xs:flex-row justify-center items-center space-y-2 xs:space-y-0 xs:space-x-3 text-center order-1 mt-2 mx-3">
                         <PrimaryButton @click="changeDay(prev_day)">
                             <span class="hidden sm:block">Prev</span>
