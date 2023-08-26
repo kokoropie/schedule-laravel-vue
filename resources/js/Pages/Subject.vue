@@ -42,12 +42,14 @@ const formNew = useForm({
 const isShowModalNew = ref(false);
 
 const showModalNew = () => {
+    formNew.clearErrors();
 	formNew.reset();
 	isShowModalNew.value = true;
 };
 
 const closeModalNew = () => {
 	isShowModalNew.value = false;
+    formNew.clearErrors();
 	formNew.reset();
 };
 
@@ -69,6 +71,8 @@ const isShowModalEdit = ref(false);
 const editSubject = ref(null);
 
 const showModalEdit = (subject) => {
+    formEdit.clearErrors();
+    formEdit.reset();
 	editSubject.value = subject;
 	formEdit.subject_id = subject.subject_id;
 	formEdit.name = subject.name;
@@ -81,6 +85,7 @@ const showModalEdit = (subject) => {
 
 const closeModalEdit = () => {
 	isShowModalEdit.value = false;
+    formEdit.clearErrors();
 	formEdit.reset();
 	editSubject.value = null;
 };

@@ -33,12 +33,14 @@ const formNew = useForm({
 const isShowModalNew = ref(false);
 
 const showModalNew = () => {
+	formNew.clearErrors();
 	formNew.reset();
 	isShowModalNew.value = true;
 };
 
 const closeModalNew = () => {
 	isShowModalNew.value = false;
+	formNew.clearErrors();
 	formNew.reset();
 };
 
@@ -55,6 +57,8 @@ const isShowModalEdit = ref(false);
 const editTeacher = ref(null);
 
 const showModalEdit = (teacher) => {
+    formEdit.clearErrors();
+	formEdit.reset();
 	editTeacher.value = teacher;
 	formEdit.name = teacher.name;
 	isShowModalEdit.value = true;
@@ -62,6 +66,7 @@ const showModalEdit = (teacher) => {
 
 const closeModalEdit = () => {
 	isShowModalEdit.value = false;
+    formEdit.clearErrors();
 	formEdit.reset();
 	editTeacher.value = null;
 };
