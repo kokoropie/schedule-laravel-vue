@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import {Head, Link, router, useForm} from "@inertiajs/vue3";
+import {Head, Link, router, useForm, usePage} from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import Modal from "@/Components/Modal.vue";
@@ -15,7 +15,7 @@ import DangerButton from "@/Components/DangerButton.vue";
 
 const swal = inject("$swal");
 
-const {schedule_selected, flash, schedule_details} = defineProps({
+defineProps({
 	schedules: {
 		type: Object,
 		required: true,
@@ -46,6 +46,18 @@ const {schedule_selected, flash, schedule_details} = defineProps({
 			5: "Thursday",
 			6: "Friday",
 			7: "Saturday",
+		},
+	},
+	dateOfWeekShort: {
+		type: Object,
+		default: {
+			1: "Sun",
+			2: "Mon",
+			3: "Tue",
+			4: "Wed",
+			5: "Thu",
+			6: "Fri",
+			7: "Sat",
 		},
 	},
 	timeOfEachClassPeriod: {
@@ -129,11 +141,11 @@ const showModalScheduleEdit = () => {
 	formScheduleEdit.reset();
 	timeOfEachClassPeriodSFE.value = {};
 	timeOfEachClassPeriodEFE.value = {};
-	formScheduleEdit.name = schedule_selected.name;
-	formScheduleEdit.numOfClassPeriodsPerDay = schedule_selected.numOfClassPeriodsPerDay;
-	for (let index in schedule_selected.timeOfEachClassPeriod) {
-		timeOfEachClassPeriodSFE.value[index] = schedule_selected.timeOfEachClassPeriod[index].start;
-		timeOfEachClassPeriodEFE.value[index] = schedule_selected.timeOfEachClassPeriod[index].end;
+	formScheduleEdit.name = usePage().props.schedule_selected.name;
+	formScheduleEdit.numOfClassPeriodsPerDay = usePage().props.schedule_selected.numOfClassPeriodsPerDay;
+	for (let index in usePage().props.schedule_selected.timeOfEachClassPeriod) {
+		timeOfEachClassPeriodSFE.value[index] = usePage().props.schedule_selected.timeOfEachClassPeriod[index].start;
+		timeOfEachClassPeriodEFE.value[index] = usePage().props.schedule_selected.timeOfEachClassPeriod[index].end;
 	}
 	isShowModalScheduleEdit.value = true;
 };
@@ -153,7 +165,7 @@ const submitScheduleEdit = () => {
 		};
 	}
 	formScheduleEdit.timeOfEachClassPeriod = timeOfEachClassPeriodFE;
-	formScheduleEdit.patch(route("schedule.update", schedule_selected), {
+	formScheduleEdit.patch(route("schedule.update", usePage().props.schedule_selected), {
 		onSuccess: closeModalScheduleEdit,
 	});
 };
@@ -169,7 +181,7 @@ const closeModalScheduleDelete = () => {
 };
 
 const submitScheduleDelete = () => {
-	router.delete(route("schedule.destroy", schedule_selected), {
+	router.delete(route("schedule.destroy", usePage().props.schedule_selected), {
 		onSuccess: closeModalScheduleDelete,
 	});
 };
@@ -216,7 +228,7 @@ const closeModalDetailNew = () => {
 };
 
 const submitDetailNew = () => {
-	formDetailNew.post(route("schedule.detail.store", [schedule_selected]), {
+	formDetailNew.post(route("schedule.detail.store", [usePage().props.schedule_selected]), {
 		onSuccess: closeModalDetailNew,
 	});
 };
@@ -264,7 +276,7 @@ const closeModalDetailEdit = () => {
 };
 
 const submitDetailEdit = () => {
-	formDetailEdit.patch(route("schedule.detail.update", [schedule_selected, editDetail.value]), {
+	formDetailEdit.patch(route("schedule.detail.update", [usePage().props.schedule_selected, editDetail.value]), {
 		onSuccess: closeModalDetailEdit,
 	});
 };
@@ -283,18 +295,23 @@ const closeModalDetailDelete = () => {
 };
 
 const submitDetailDelete = () => {
-	router.delete(route("schedule.detail.destroy", [schedule_selected, deleteDetail.value]), {
+	router.delete(route("schedule.detail.destroy", [usePage().props.schedule_selected, deleteDetail.value]), {
 		onSuccess: closeModalDetailDelete,
 	});
 };
 
-if (flash) {
-	if (flash.swal) {
-		swal(flash.swal.data).then(() => {
-			eval(flash.swal.then);
-		});
-	}
-}
+watch(
+    () => usePage().props,
+    (newProps) => {
+        if (newProps.flash) {
+            if (newProps.flash.swal) {
+                swal(newProps.flash.swal.data).then(() => {
+                    eval(newProps.flash.swal.then);
+                });
+            }
+        }
+    }
+)
 </script>
 <template>
 	<Head title="Schedules" />
@@ -336,9 +353,8 @@ if (flash) {
 							v-for="schedule in schedules"
 							:href="route('schedule.show', schedule)"
                             replace
-                            preserve-scroll
 							v-bind:key="schedule.schedule_id"
-							:only="['schedule_details']"
+							:only="['schedule_details', 'schedule_selected']"
 							>{{ schedule.name }}</DropdownLink
 						>
 					</template>
@@ -791,7 +807,7 @@ if (flash) {
 									{{ schedule.type }}
 								</td>
 								<td class="px-3 md:px-6 py-3 whitespace-nowrap text-left w-auto">
-									{{ schedule.dateOfWeek.map(v => dateOfWeek[v]).join(", ") }}
+									{{ schedule.dateOfWeek.map(v => dateOfWeekShort[v]).join(", ") }}
 								</td>
 								<td class="px-3 md:px-6 py-1 whitespace-nowrap text-center space-x-2">
 									<SecondaryButton
