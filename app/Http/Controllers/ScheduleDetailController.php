@@ -37,7 +37,7 @@ class ScheduleDetailController extends Controller
 
         $schedule->details()->create($validated);
 
-        return redirect()->back();
+        return redirect(route('schedule.show', $schedule));
     }
 
     /**
