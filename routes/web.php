@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DataController;
 use App\Http\Controllers\ScheduleDetailController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\SubjectController;
@@ -41,6 +42,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/profile/data/export', [DataController::class, 'export'])->name('profile.data.export');
+    Route::post('/profile/data/import', [DataController::class, 'import'])->name('profile.data.import');
 
     Route::resource('/teacher', TeacherController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('/subject', SubjectController::class)->only(['index', 'store', 'update', 'destroy']);

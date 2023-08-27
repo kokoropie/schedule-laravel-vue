@@ -1,9 +1,11 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import DataForm from './Partials/DataForm.vue';
 import DeleteUserForm from './Partials/DeleteUserForm.vue';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
-import { Head } from '@inertiajs/vue3';
+import { watch, inject } from 'vue';
+import { Head, usePage } from '@inertiajs/vue3';
 
 defineProps({
     mustVerifyEmail: {
@@ -13,6 +15,21 @@ defineProps({
         type: String,
     },
 });
+
+const swal = inject("$swal");
+
+watch(
+    () => usePage().props,
+    (newProps) => {
+        if (newProps.flash) {
+            if (newProps.flash.swal) {
+                swal(newProps.flash.swal.data).then(() => {
+                    eval(newProps.flash.swal.then);
+                });
+            }
+        }
+    }
+)
 </script>
 
 <template>
@@ -31,6 +48,10 @@ defineProps({
                         :status="status"
                         class="max-w-xl"
                     />
+                </div>
+
+                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+                    <DataForm class="max-w-xl" />
                 </div>
 
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
