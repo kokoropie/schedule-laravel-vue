@@ -16,6 +16,19 @@ const props = defineProps({
     },
 });
 
+const getScrollbarWidth = () => {
+    const outer = document.createElement('div');
+    outer.style.visibility = 'hidden';
+    outer.style.overflow = 'scroll';
+    outer.style.msOverflowStyle = 'scrollbar';
+    document.body.appendChild(outer);
+    const inner = document.createElement('div');
+    outer.appendChild(inner);
+    const scrollbarWidth = (outer.offsetWidth - inner.offsetWidth);
+    outer.parentNode.removeChild(outer);
+    return scrollbarWidth;
+}
+
 const emit = defineEmits(['close']);
 
 watch(
@@ -23,8 +36,11 @@ watch(
     () => {
         if (props.show) {
             document.body.style.overflow = 'hidden';
+            if (document.documentElement.clientHeight != document.body.clientHeight)
+                document.body.style.marginRight = getScrollbarWidth() + "px";
         } else {
             document.body.style.overflow = null;
+            document.body.style.marginRight = null;
         }
     }
 );
@@ -86,7 +102,7 @@ const maxWidthClass = computed(() => {
                 >
                     <div
                         v-show="show"
-                        class="mb-6 bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-full sm:mx-auto"
+                        class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-full sm:mx-auto"
                         :class="maxWidthClass"
                     >
                         <slot v-if="show" />
