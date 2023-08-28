@@ -34,7 +34,7 @@ defineProps({
 const formNew = useForm({
 	subject_id: "",
 	name: "",
-	credits: 1,
+	credits: "1",
 	color_foreground: "#000000",
 	color_background: "#ffffff",
 	teacher_id: "",
@@ -62,7 +62,7 @@ const submitNew = () => {
 const formEdit = useForm({
 	subject_id: "",
 	name: "",
-	credits: 1,
+	credits: "1",
 	color_foreground: "#000000",
 	color_background: "#ffffff",
 	teacher_id: "",
@@ -76,7 +76,7 @@ const showModalEdit = (subject) => {
 	editSubject.value = subject;
 	formEdit.subject_id = subject.subject_id;
 	formEdit.name = subject.name;
-	formEdit.credits = subject.credits;
+	formEdit.credits = subject.credits + "";
 	formEdit.color_foreground = subject.color_foreground;
 	formEdit.color_background = subject.color_background;
 	formEdit.teacher_id = subject.teacher_id;
@@ -534,7 +534,7 @@ const submitDelete = () => {
 								-- Teacher --
 							</option>
 							<option
-								v-for="teacher in subjects"
+								v-for="teacher in teachers"
 								:key="teacher.teacher_id"
 								:value="teacher.teacher_id">
 								{{ teacher.name }}
@@ -692,7 +692,7 @@ const submitDelete = () => {
 							required
 							class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full">
 							<option
-								v-for="teacher in subjects"
+								v-for="teacher in teachers"
 								:key="teacher.teacher_id"
 								:value="teacher.teacher_id">
 								{{ teacher.name }}
