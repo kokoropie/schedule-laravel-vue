@@ -12,14 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('schedule_details', function (Blueprint $table) {
-            $table->bigInteger("schedule_id")->unsigned();
+            $table->id("schedule_detail_id");
+            $table->foreignId("schedule_id");
             $table->char("subject_id", 10);
             $table->tinyInteger("start");
             $table->tinyInteger("end");
             $table->date("from");
             $table->date("to");
-            $table->enum("dateOfWeek", [1,2,3,4,5,6,7])->default(2);
+            $table->json("dateOfWeek");
             $table->enum("type", ["ONLINE", "OFFLINE"])->default("OFFLINE");
+            $table->boolean("is_makeUp_class")->default(false);
             $table->foreign("schedule_id")->references('schedule_id')->on('schedules');
             $table->foreign("subject_id")->references('subject_id')->on('subjects');
         });

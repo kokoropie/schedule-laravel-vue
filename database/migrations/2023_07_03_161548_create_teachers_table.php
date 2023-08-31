@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('teachers', function (Blueprint $table) {
             $table->id("teacher_id");
             $table->string("name", 100);
-            $table->bigInteger('user_id')->unsigned();
+            $table->foreignId('user_id');
             $table->foreign("user_id")->references('user_id')->on('users');
         });
     }

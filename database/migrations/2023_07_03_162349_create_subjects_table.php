@@ -17,8 +17,8 @@ return new class extends Migration
             $table->tinyInteger("credits");
             $table->char('color_background')->default('#ffffff');
             $table->char('color_foreground')->default('#000000');
-            $table->bigInteger("teacher_id")->unsigned();
-            $table->bigInteger('user_id')->unsigned();
+            $table->foreignId("teacher_id");
+            $table->foreignId('user_id');
             $table->unique(['subject_id', 'user_id']);
             $table->foreign("user_id")->references('user_id')->on('users');
             $table->foreign("teacher_id")->references('teacher_id')->on('teachers');

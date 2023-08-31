@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('schedules', function (Blueprint $table) {
             $table->id("schedule_id");
             $table->string("name", 100);
-            $table->bigInteger('user_id')->unsigned();
+            $table->foreignId('user_id');
             $table->tinyInteger("numOfClassPeriodsPerDay")->unsigned()->default(1);
             $table->json("timeOfEachClassPeriod");
             $table->foreign("user_id")->references('user_id')->on('users');
