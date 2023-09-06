@@ -126,8 +126,7 @@ class HomeController extends Controller
                             "title" => "You don't have any schedule",
                             "text" => "Please add a new schedule.",
                             "confirmButtonText" => "Add"
-                        ],
-                        "then" => "showModalScheduleNew()"
+                        ]
                     ]
                 ]);
             }
