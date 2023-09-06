@@ -1,13 +1,26 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, inject, watchEffect } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
+
+const swal = inject("$swal");
+watchEffect(
+    async () => {
+        const { props } = usePage();
+        if (props.flash) {
+            if (props.flash.swal) {
+                swal(props.flash.swal.data);
+            }
+        }
+    }
+)
+
 </script>
 
 <template>

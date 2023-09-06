@@ -10,10 +10,8 @@ import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
-import {ref, watch, inject} from "vue";
+import {ref, watch} from "vue";
 import DangerButton from "@/Components/DangerButton.vue";
-
-const swal = inject("$swal");
 
 defineProps({
 	schedules: {
@@ -22,7 +20,6 @@ defineProps({
 	},
 	schedule_selected: {
 		type: Object,
-		required: true,
 	},
 	schedule_details: {
 		type: Object,
@@ -86,7 +83,7 @@ const timeOfEachClassPeriodSFN = ref({});
 const timeOfEachClassPeriodEFN = ref({});
 const formScheduleNew = useForm({
 	name: "",
-	numOfClassPeriodsPerDay: 1,
+	numOfClassPeriodsPerDay: "1",
 	timeOfEachClassPeriod: null,
 });
 const isShowModalScheduleNew = ref(false);
@@ -131,7 +128,7 @@ const timeOfEachClassPeriodSFE = ref({});
 const timeOfEachClassPeriodEFE = ref({});
 const formScheduleEdit = useForm({
 	name: "",
-	numOfClassPeriodsPerDay: 1,
+	numOfClassPeriodsPerDay: "1",
 	timeOfEachClassPeriod: null,
 });
 const isShowModalScheduleEdit = ref(false);
@@ -142,7 +139,7 @@ const showModalScheduleEdit = () => {
 	timeOfEachClassPeriodSFE.value = {};
 	timeOfEachClassPeriodEFE.value = {};
 	formScheduleEdit.name = usePage().props.schedule_selected.name;
-	formScheduleEdit.numOfClassPeriodsPerDay = usePage().props.schedule_selected.numOfClassPeriodsPerDay;
+	formScheduleEdit.numOfClassPeriodsPerDay = usePage().props.schedule_selected.numOfClassPeriodsPerDay + "";
 	for (let index in usePage().props.schedule_selected.timeOfEachClassPeriod) {
 		timeOfEachClassPeriodSFE.value[index] = usePage().props.schedule_selected.timeOfEachClassPeriod[index].start;
 		timeOfEachClassPeriodEFE.value[index] = usePage().props.schedule_selected.timeOfEachClassPeriod[index].end;
@@ -299,19 +296,6 @@ const submitDetailDelete = () => {
 		onSuccess: closeModalDetailDelete,
 	});
 };
-
-watch(
-    () => usePage().props,
-    (newProps) => {
-        if (newProps.flash) {
-            if (newProps.flash.swal) {
-                swal(newProps.flash.swal.data).then(() => {
-                    eval(newProps.flash.swal.then);
-                });
-            }
-        }
-    }
-)
 </script>
 <template>
 	<Head title="Schedules" />
