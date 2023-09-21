@@ -36,7 +36,14 @@ class DataController extends Controller
             $json = json_decode($file);
             $schedules = [];
             foreach ($json->schedules as $schedule_id => $schedule) {
-                $schedules[$schedule_id] = $user->schedules()->create((array) $schedule);
+                $schedules[$schedule_id] = $user->schedules()->create([
+                    "name" => $schedule->name,
+                    "numOfClassPeriodsPerDay" => $schedule->numOfClassPeriodsPerDay,
+                    "timeOfEachClassPeriod" => $schedule->timeOfEachClassPeriod,
+                ]);
+                if ($schedule->share) {
+                    $schedules[$schedule_id]->share()->create([]);
+                }
             }
             foreach ($json->teachers as $teacher) {
                 $newTeacher = $user->teachers()->create([
@@ -89,7 +96,8 @@ class DataController extends Controller
                 $data["schedules"][$schedule->schedule_id] = [
                     "name" => $schedule->name,
                     "numOfClassPeriodsPerDay" => $schedule->numOfClassPeriodsPerDay,
-                    "timeOfEachClassPeriod" => $schedule->timeOfEachClassPeriod
+                    "timeOfEachClassPeriod" => $schedule->timeOfEachClassPeriod,
+                    "share" => $schedule->share()->exists(),
                 ];
             }
             foreach ($user->teachers as $teacher) {

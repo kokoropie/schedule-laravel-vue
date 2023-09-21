@@ -77,6 +77,7 @@ class ScheduleController extends Controller
         return Inertia::render("Schedule", [
             "schedules" => fn () => auth()->user()->schedules,
             "schedule_selected" => fn () => $schedule,
+            "schedule_share" => fn () => $schedule->share,
             "subjects" => fn () => auth()->user()->subjects,
             "numOfClassPeriodsPerDay" => fn () => $schedule->numOfClassPeriodsPerDay,
             'timeOfEachClassPeriod' => fn () => $schedule->timeOfEachClassPeriod,
@@ -118,5 +119,18 @@ class ScheduleController extends Controller
         $schedule->delete();
 
         return redirect(route('schedule.index'));
+    }
+
+    public function share(Schedule $schedule): RedirectResponse
+    {
+        $this->authorize('update', $schedule);
+
+        if ($schedule->share) {
+            $schedule->share()->delete();
+        } else {
+            $schedule->share()->create([]);
+        }
+
+        return redirect()->back();
     }
 }

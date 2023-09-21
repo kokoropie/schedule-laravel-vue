@@ -21,6 +21,10 @@ class Schedule extends Model
         return $this->belongsTo(User::class, "user_id", "user_id");
     }
 
+    public function share() {
+        return $this->hasOne(ScheduleShare::class, "schedule_id", "schedule_id");
+    }
+
     public function details() {
         return $this->hasMany(ScheduleDetail::class, "schedule_id", "schedule_id");
     }
@@ -28,6 +32,7 @@ class Schedule extends Model
     protected static function booted(): void
     {
         static::deleting(function (Schedule $schedule) {
+            $schedule->share()->delete();
             $schedule->details()->delete();
         });
     }

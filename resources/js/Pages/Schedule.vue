@@ -1,6 +1,7 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import {Head, Link, router, useForm, usePage} from "@inertiajs/vue3";
+import {ref, watch} from "vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import Modal from "@/Components/Modal.vue";
@@ -10,8 +11,8 @@ import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
-import {ref, watch} from "vue";
 import DangerButton from "@/Components/DangerButton.vue";
+import Copy from "@/Components/Copy.vue";
 
 defineProps({
 	schedules: {
@@ -21,6 +22,9 @@ defineProps({
 	schedule_selected: {
 		type: Object,
 	},
+    schedule_share: {
+        type: Object,
+    },
 	schedule_details: {
 		type: Object,
 		required: true,
@@ -183,6 +187,20 @@ const submitScheduleDelete = () => {
 	});
 };
 
+const isShowModalScheduleShare = ref(false);
+
+const showModalScheduleShare = () => {
+	isShowModalScheduleShare.value = true;
+}
+
+const submitScheduleShare = () => {
+    router.post(route("schedule.share", [usePage().props.schedule_selected]));
+}
+
+const closeModalScheduleShare = () => {
+	isShowModalScheduleShare.value = false;
+}
+
 const formDetailNew = useForm({
 	subject_id: "",
 	start: 1,
@@ -312,7 +330,7 @@ const submitDetailDelete = () => {
 					<template #trigger>
 						<span class="inline-flex rounded-md">
 							<PrimaryButton>
-								Main Schedules
+								Schedules
 								<svg
 									class="ml-2 -mr-0.5 h-4 w-4"
 									xmlns="http://www.w3.org/2000/svg"
@@ -363,6 +381,11 @@ const submitDetailDelete = () => {
 					</template>
 
 					<template #content>
+						<button
+							class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 dark:text-gray-50 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 transition duration-150 ease-in-out"
+							@click="showModalScheduleShare(schedule_selected)">
+							Share
+						</button>
 						<button
 							class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 dark:text-gray-50 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 transition duration-150 ease-in-out"
 							@click="showModalScheduleNew(schedule_selected)">
@@ -1129,6 +1152,66 @@ const submitDetailDelete = () => {
 				>
 			</div>
 		</Modal>
+
+        <!-- Sharing Schedule Modal -->
+        <Modal
+            :show="isShowModalScheduleShare"
+            @close="closeModalScheduleShare">
+            <div class="flex items-start justify-between p-4 border-b rounded-t">
+                <h3 class="text-xl font-semibold text-gray-900">Share main schedule</h3>
+                <button
+                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                    type="button"
+                    @click="closeModalScheduleShare">
+                    <svg
+                        aria-hidden="true"
+                        class="w-5 h-5"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            clip-rule="evenodd"
+                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                            fill-rule="evenodd" />
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </div>
+            <div class="p-6">
+                <div v-if="schedule_share">
+                    <p>"{{ schedule_selected.name }}" schedule is shared</p>
+                    <a :href="route('share', [schedule_share])" target="_blank" class="font-mono p-1 rounded bg-gray-300">{{ route('share', [schedule_share]) }}</a>
+                    <Copy :text="route('share', [schedule_share])">
+                        <template #copied>
+                            <small class="text-gray-700">Link is copied</small>
+                        </template>
+                        <small class="text-gray-500 cursor-pointer hover:text-gray-700">Click to copy</small>
+                    </Copy>
+                </div>
+                <div v-else>
+                    <p>"{{ schedule_selected.name }}" schedule isn't shared</p>
+                </div>
+            </div>
+            <div class="flex justify-end items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
+                <SecondaryButton
+                    type="button"
+                    @click="closeModalScheduleShare"
+                    >Close</SecondaryButton
+                >
+                <PrimaryButton
+                    type="button"
+                    @click="submitScheduleShare"
+                    v-if="schedule_share"
+                    >Not share</PrimaryButton
+                >
+                <PrimaryButton
+                    type="button"
+                    @click="submitScheduleShare"
+                    v-else
+                    >Share</PrimaryButton
+                >
+            </div>
+        </Modal>
 
 		<!-- Creating Detail Modal -->
 		<Modal

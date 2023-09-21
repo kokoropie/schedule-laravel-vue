@@ -48,10 +48,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('/teacher', TeacherController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('/subject', SubjectController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('/schedule', ScheduleController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::post('/schedule/{schedule:schedule_id}/share', [ScheduleController::class, 'share'])->name("schedule.share")->where('schedule', '[0-9]+');
     Route::resource('/schedule.detail', ScheduleDetailController::class)->only(['store', 'update', 'destroy']);
 
     Route::get('/{schedule:schedule_id}/{day?}', [HomeController::class, 'schedule'])->name('home.schedule')->where('schedule', '[0-9]+')->where('day', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
     Route::get('/{day?}', [HomeController::class, 'index'])->name('home')->where('day', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
 });
+
+Route::get('/share/{schedule_share:schedule_share_id}/{day?}', [HomeController::class, 'share'])->name('share')->where('schedule_share', '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}')->where('day', '[0-9]{4}-[0-9]{2}-[0-9]{2}');;
 
 require __DIR__.'/auth.php';
