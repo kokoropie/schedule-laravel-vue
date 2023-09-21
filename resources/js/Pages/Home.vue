@@ -164,7 +164,7 @@ const paramRoute = (isFirst, schedule, day = "", today = "") => {
                 v-if="schedules.length > 0"
             >
                 <span class="mr-auto">{{ schedule_selected.name }}</span>
-                <Dropdown align="right" width="48" v-if="schedules.length > 1">
+                <Dropdown align="right" v-if="schedules.length > 1">
                     <template #trigger>
                         <span class="inline-flex rounded-md">
                             <PrimaryButton>
@@ -261,7 +261,7 @@ const paramRoute = (isFirst, schedule, day = "", today = "") => {
                             </th>
                             <template v-for="n in 7" :key="n">
                                 <th
-                                    v-if="n > date + 1"
+                                    v-if="n > date*1 + 1"
                                     class="px-6 py-1 border border-black dark:border-white whitespace-nowrap"
                                     :class="{
                                         'bg-white dark:bg-black dark:text-white':
@@ -279,7 +279,7 @@ const paramRoute = (isFirst, schedule, day = "", today = "") => {
                                 </th>
                             </template>
                             <th
-                                v-for="n in date"
+                                v-for="n in date*1"
                                 :key="n"
                                 class="px-6 py-1 border border-black dark:border-white whitespace-nowrap"
                                 :class="{
@@ -296,7 +296,7 @@ const paramRoute = (isFirst, schedule, day = "", today = "") => {
                             </th>
                         </tr>
                         <tr
-                            v-for="n in maxADay"
+                            v-for="n in maxADay*1"
                             class="bg-white dark:bg-black dark:text-white"
                             :key="n"
                         >
@@ -358,7 +358,7 @@ const paramRoute = (isFirst, schedule, day = "", today = "") => {
                                                     n == 1 &&
                                                     schedule_details[m - 1][n]
                                                         .rowspan +
-                                                        n -
+                                                        n*1 -
                                                         1 !=
                                                         maxADay, // bottom
                                                 '-left-2 top-1/2 -translate-x-full -translate-y-1/2 after:content-[\'\'] after:absolute after:top-1/2  after:left-full after:-translate-y-1/2 after:border-8 after:border-y-transparent after:border-r-transparent after:border-l-gray-900':
@@ -373,7 +373,7 @@ const paramRoute = (isFirst, schedule, day = "", today = "") => {
                                                     n == 1 &&
                                                     schedule_details[m - 1][n]
                                                         .rowspan +
-                                                        n -
+                                                        n*1 -
                                                         1 ==
                                                         maxADay, // top-bottom
                                             }"
@@ -389,7 +389,7 @@ const paramRoute = (isFirst, schedule, day = "", today = "") => {
                                                 timeOfEachClassPeriod[
                                                     schedule_details[m - 1][n]
                                                         .rowspan +
-                                                        n -
+                                                        n*1 -
                                                         1
                                                 ].end
                                             }})
