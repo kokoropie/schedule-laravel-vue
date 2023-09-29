@@ -30,21 +30,21 @@ class HomeController extends Controller
                 $time = Carbon::createFromFormat("!Y-m-d", $day, config("app.timezone", "Asia/Ho_Chi_Minh"));
             }
 
-            $nextWeek = $time->copy()->addDays(7);
+            $nextWeek = $time->copy()->addDays(6);
 
             $schedules = [];
             $tmp = $schedule_selected->details()->where(function($query) use ($nextWeek, $time) {
                 $query->where(function($query) use ($nextWeek, $time) {
                     $query->whereDate("from", "<=", $time)
-                        ->whereDate("to", ">", $nextWeek);
+                        ->whereDate("to", ">=", $nextWeek);
                 })
                 ->orWhere(function($query) use ($nextWeek, $time) {
                     $query->whereDate('from', ">=", $time)
-                        ->whereDate('from', "<", $nextWeek);
+                        ->whereDate('from', "<=", $nextWeek);
                 })
                 ->orWhere(function($query) use ($nextWeek, $time) {
                     $query->whereDate('to', ">=", $time)
-                        ->whereDate('to', "<", $nextWeek);
+                        ->whereDate('to', "<=", $nextWeek);
                 });
             })->get();
             $maxADay = $schedule_selected->numOfClassPeriodsPerDay;
@@ -144,21 +144,21 @@ class HomeController extends Controller
                 $time = Carbon::createFromFormat("!Y-m-d", $day, config("app.timezone", "Asia/Ho_Chi_Minh"));
             }
 
-            $nextWeek = $time->copy()->addDays(7);
+            $nextWeek = $time->copy()->addDays(6);
 
             $schedules = [];
             $tmp = $schedule_selected->details()->where(function($query) use ($nextWeek, $time) {
                 $query->where(function($query) use ($nextWeek, $time) {
                     $query->whereDate("from", "<=", $time)
-                        ->whereDate("to", ">", $nextWeek);
+                        ->whereDate("to", ">=", $nextWeek);
                 })
                 ->orWhere(function($query) use ($nextWeek, $time) {
                     $query->whereDate('from', ">=", $time)
-                        ->whereDate('from', "<", $nextWeek);
+                        ->whereDate('from', "<=", $nextWeek);
                 })
                 ->orWhere(function($query) use ($nextWeek, $time) {
                     $query->whereDate('to', ">=", $time)
-                        ->whereDate('to', "<", $nextWeek);
+                        ->whereDate('to', "<=", $nextWeek);
                 });
             })->get();
             $maxADay = $schedule_selected->numOfClassPeriodsPerDay;
