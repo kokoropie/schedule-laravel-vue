@@ -239,8 +239,8 @@ const showModalDetailNew = (detail = null) => {
     formDetailNew.reset();
     if (detail) {
         formDetailNew.subject_id = detail.subject_id;
-        formDetailNew.start = detail.start;
-        formDetailNew.end = detail.end;
+        formDetailNew.start = detail.start * 1;
+        formDetailNew.end = detail.end * 1;
         formDetailNew.from = detail.from;
         formDetailNew.to = detail.to;
         formDetailNew.type = detail.type;
@@ -290,8 +290,8 @@ const showModalDetailEdit = (detail) => {
     formDetailEdit.reset();
     editDetail.value = detail;
     formDetailEdit.subject_id = detail.subject_id;
-    formDetailEdit.start = detail.start;
-    formDetailEdit.end = detail.end;
+    formDetailEdit.start = detail.start * 1;
+    formDetailEdit.end = detail.end * 1;
     formDetailEdit.from = detail.from;
     formDetailEdit.to = detail.to;
     formDetailEdit.type = detail.type;
