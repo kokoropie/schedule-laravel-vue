@@ -217,6 +217,7 @@ class HomeController extends Controller
             }
 
             return Inertia::render('Share', [
+                'author' => fn () => $schedule_selected->user,
                 'schedule_share' => fn () => $scheduleShare,
                 'schedule_selected' => fn () => $schedule_selected,
                 'schedule_details' => fn () => $schedules,
@@ -227,7 +228,7 @@ class HomeController extends Controller
                 'day' => $time->format("Y-m-d"),
                 'prev_day' => $time->copy()->subDay()->format("Y-m-d"),
                 'next_day' => $time->copy()->addDay()->format("Y-m-d"),
-                'today' => date('Y-m-d')
+                'today' => date('Y-m-d'),
             ]);
         } else {
             return abort(404);

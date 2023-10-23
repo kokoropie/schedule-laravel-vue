@@ -7,6 +7,10 @@ import { ref, onMounted, onUnmounted, } from "vue";
 import XLSX from "xlsx";
 
 defineProps({
+    author: {
+        type: Object,
+        required: true,
+    },
     schedule_share: {
         type: Object,
         required: true,
@@ -148,7 +152,7 @@ const paramRoute = (schedule_share, day = "", today = "") => {
 </script>
 
 <template>
-    <Head title="Share" />
+    <Head :title="`${schedule_selected.name} - ${author.name}`" />
     <div>
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             <nav class="bg-white border-b border-gray-100 dark:bg-black dark:border-gray-900">
