@@ -36,7 +36,7 @@ class ScheduleDetailController extends Controller
         $validated = $request->validated();
 
         if ($validated["from"] === $validated["to"]) {
-            $validated["dateOfWeek"] = [date("w", strtotime($validated["from"]))];
+            $validated["dateOfWeek"] = [date("w", strtotime($validated["from"]))+1];
         }
 
         $schedule->details()->create($validated);
@@ -70,7 +70,7 @@ class ScheduleDetailController extends Controller
         $validated = $request->validated();
 
         if ($validated["from"] === $validated["to"]) {
-            $validated["dateOfWeek"] = [date("w", strtotime($validated["from"]))];
+            $validated["dateOfWeek"] = [date("w", strtotime($validated["from"]))+1];
         }
 
         $detail->update($validated);
