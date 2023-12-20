@@ -35,6 +35,11 @@ class ScheduleDetailController extends Controller
 
         $validated = $request->validated();
 
+        if ($validated["from"] === $validated["to"]) {
+            $validated["dateOfWeek"] = [date("w", strtotime($validated["from"]))];
+        }
+
+
         $schedule->details()->create($validated);
 
         return redirect(route('schedule.show', $schedule));
