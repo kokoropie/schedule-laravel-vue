@@ -39,7 +39,6 @@ class ScheduleDetailController extends Controller
             $validated["dateOfWeek"] = [date("w", strtotime($validated["from"]))];
         }
 
-
         $schedule->details()->create($validated);
 
         return redirect(route('schedule.show', $schedule));
@@ -69,6 +68,10 @@ class ScheduleDetailController extends Controller
         $this->authorize("update", [$schedule, $detail]);
 
         $validated = $request->validated();
+
+        if ($validated["from"] === $validated["to"]) {
+            $validated["dateOfWeek"] = [date("w", strtotime($validated["from"]))];
+        }
 
         $detail->update($validated);
 
