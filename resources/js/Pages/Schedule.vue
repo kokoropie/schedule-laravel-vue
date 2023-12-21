@@ -391,7 +391,7 @@ const submitDetailDelete = () => {
                             :href="route('schedule.show', schedule)"
                             replace
                             v-bind:key="schedule.schedule_id"
-                            :only="['schedule_details', 'schedule_selected']"
+                            :only="['schedule_details', 'schedule_selected', 'schedule_share']"
                             >{{ schedule.name }}</DropdownLink
                         >
                     </template>
