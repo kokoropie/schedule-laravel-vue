@@ -23,10 +23,6 @@ defineProps({
         type: Object,
         required: true,
     },
-    date: {
-        type: Number,
-        required: true,
-    },
     nameOfDate: {
         type: Object,
         required: true,
@@ -69,7 +65,6 @@ const changeDay = (day) => {
                 preserveScroll: true,
                 preserveState: true,
                 only: [
-                    'date',
                     'day',
                     'today',
                     'nameOfDate',
@@ -215,23 +210,8 @@ const paramRoute = (schedule_share, day = "", today = "") => {
                     <table ref="scheduleTable" class="w-full mb-2">
                         <tr>
                             <th class="px-6 py-1"></th>
-                            <th
-                                class="px-6 py-1 border border-black dark:border-white whitespace-nowrap"
-                                :class="{
-                                    'bg-white dark:bg-black dark:text-white':
-                                        nameOfDate[date].date != today,
-                                    'bg-green-100 dark:bg-green-700 dark:text-white':
-                                        nameOfDate[date].date == today,
-                                }"
-                            >
-                                <div class="flex flex-col">
-                                    {{ nameOfDate[date].title }}
-                                    <small>{{ nameOfDate[date].date }}</small>
-                                </div>
-                            </th>
                             <template v-for="n in 7" :key="n">
                                 <th
-                                    v-if="n > date*1 + 1"
                                     class="px-6 py-1 border border-black dark:border-white whitespace-nowrap"
                                     :class="{
                                         'bg-white dark:bg-black dark:text-white':
@@ -248,22 +228,6 @@ const paramRoute = (schedule_share, day = "", today = "") => {
                                     </div>
                                 </th>
                             </template>
-                            <th
-                                v-for="n in date*1"
-                                :key="n"
-                                class="px-6 py-1 border border-black dark:border-white whitespace-nowrap"
-                                :class="{
-                                    'bg-white dark:bg-black dark:text-white':
-                                        nameOfDate[n - 1].date != today,
-                                    'bg-green-100 dark:bg-green-700 dark:text-white':
-                                        nameOfDate[n - 1].date == today,
-                                }"
-                            >
-                                <div class="flex flex-col">
-                                    {{ nameOfDate[n - 1].title }}
-                                    <small>{{ nameOfDate[n - 1].date }}</small>
-                                </div>
-                            </th>
                         </tr>
                         <tr
                             v-for="n in maxADay*1"

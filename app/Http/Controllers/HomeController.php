@@ -30,26 +30,27 @@ class HomeController extends Controller
                 $time = Carbon::createFromFormat("!Y-m-d", $day, config("app.timezone", "Asia/Ho_Chi_Minh"));
             }
 
-            $nextWeek = $time->copy()->addDays(6);
+            $startOfWeek = $time->copy()->startOfWeek(Carbon::MONDAY);
+            $endOfWeek = $time->copy()->endOfWeek(Carbon::SUNDAY);
 
             $schedules = [];
-            $tmp = $schedule_selected->details()->where(function($query) use ($nextWeek, $time) {
-                $query->where(function($query) use ($nextWeek, $time) {
-                    $query->whereDate("from", "<=", $time)
-                        ->whereDate("to", ">=", $nextWeek);
+            $tmp = $schedule_selected->details()->where(function($query) use ($startOfWeek, $endOfWeek) {
+                $query->where(function($query) use ($startOfWeek, $endOfWeek) {
+                    $query->whereDate("from", "<=", $startOfWeek)
+                        ->whereDate("to", ">=", $endOfWeek);
                 })
-                ->orWhere(function($query) use ($nextWeek, $time) {
-                    $query->whereDate('from', ">=", $time)
-                        ->whereDate('from', "<=", $nextWeek);
+                ->orWhere(function($query) use ($startOfWeek, $endOfWeek) {
+                    $query->whereDate('from', ">=", $startOfWeek)
+                        ->whereDate('from', "<=", $endOfWeek);
                 })
-                ->orWhere(function($query) use ($nextWeek, $time) {
-                    $query->whereDate('to', ">=", $time)
-                        ->whereDate('to', "<=", $nextWeek);
+                ->orWhere(function($query) use ($startOfWeek, $endOfWeek) {
+                    $query->whereDate('to', ">=", $startOfWeek)
+                        ->whereDate('to', "<=", $endOfWeek);
                 });
             })->get();
             $maxADay = $schedule_selected->numOfClassPeriodsPerDay;
 
-            $date = $time->copy();
+            $date = $startOfWeek->copy();
             for ($j = 0; $j < 7; ++$j) {
                 $schedules[$j] = [];
                 for ($i = 1; $i <= $maxADay; $i++) {
@@ -86,17 +87,10 @@ class HomeController extends Controller
 
             $nameOfDate = [];
             $tmp = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-            $curDate = $time->copy();
-            for ($i = $time->format("w"); $i < 7; $i++) {
+            $curDate = $startOfWeek->copy();
+            for ($i = $startOfWeek->format("w")-1; $i < 7; $i++) {
                 $nameOfDate[$i] = [
-                    "title" => $tmp[$i],
-                    "date" => $curDate->format("Y-m-d")
-                ];
-                $curDate->addDay();
-            }
-            for ($i = 0; $i < $time->format("w"); $i++) {
-                $nameOfDate[$i] = [
-                    "title" => $tmp[$i],
+                    "title" => $tmp[$curDate->format("w")],
                     "date" => $curDate->format("Y-m-d")
                 ];
                 $curDate->addDay();
@@ -106,13 +100,12 @@ class HomeController extends Controller
                 'schedules' => fn () => auth()->user()->schedules,
                 'schedule_selected' => fn () => $schedule_selected,
                 'schedule_details' => fn () => $schedules,
-                'date' => $time->format("w")*1,
                 'nameOfDate' => $nameOfDate,
                 'maxADay' => $maxADay,
                 'timeOfEachClassPeriod' => fn () => $schedule_selected->timeOfEachClassPeriod,
                 'day' => $time->format("Y-m-d"),
-                'prev_day' => $time->copy()->subDay()->format("Y-m-d"),
-                'next_day' => $time->copy()->addDay()->format("Y-m-d"),
+                'prev_day' => $time->copy()->subDays(7)->format("Y-m-d"),
+                'next_day' => $time->copy()->addDays(7)->format("Y-m-d"),
                 'today' => date('Y-m-d'),
                 'firstSchedule' => fn () => auth()->user()->schedules()->first()->schedule_id
             ]);
@@ -144,26 +137,27 @@ class HomeController extends Controller
                 $time = Carbon::createFromFormat("!Y-m-d", $day, config("app.timezone", "Asia/Ho_Chi_Minh"));
             }
 
-            $nextWeek = $time->copy()->addDays(6);
+            $startOfWeek = $time->copy()->startOfWeek(Carbon::MONDAY);
+            $endOfWeek = $time->copy()->endOfWeek(Carbon::SUNDAY);
 
             $schedules = [];
-            $tmp = $schedule_selected->details()->where(function($query) use ($nextWeek, $time) {
-                $query->where(function($query) use ($nextWeek, $time) {
-                    $query->whereDate("from", "<=", $time)
-                        ->whereDate("to", ">=", $nextWeek);
+            $tmp = $schedule_selected->details()->where(function($query) use ($startOfWeek, $endOfWeek) {
+                $query->where(function($query) use ($startOfWeek, $endOfWeek) {
+                    $query->whereDate("from", "<=", $startOfWeek)
+                        ->whereDate("to", ">=", $endOfWeek);
                 })
-                ->orWhere(function($query) use ($nextWeek, $time) {
-                    $query->whereDate('from', ">=", $time)
-                        ->whereDate('from', "<=", $nextWeek);
+                ->orWhere(function($query) use ($startOfWeek, $endOfWeek) {
+                    $query->whereDate('from', ">=", $startOfWeek)
+                        ->whereDate('from', "<=", $endOfWeek);
                 })
-                ->orWhere(function($query) use ($nextWeek, $time) {
-                    $query->whereDate('to', ">=", $time)
-                        ->whereDate('to', "<=", $nextWeek);
+                ->orWhere(function($query) use ($startOfWeek, $endOfWeek) {
+                    $query->whereDate('to', ">=", $startOfWeek)
+                        ->whereDate('to', "<=", $endOfWeek);
                 });
             })->get();
             $maxADay = $schedule_selected->numOfClassPeriodsPerDay;
 
-            $date = $time->copy();
+            $date = $startOfWeek->copy();
             for ($j = 0; $j < 7; ++$j) {
                 $schedules[$j] = [];
                 for ($i = 1; $i <= $maxADay; $i++) {
@@ -200,17 +194,10 @@ class HomeController extends Controller
 
             $nameOfDate = [];
             $tmp = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-            $curDate = $time->copy();
-            for ($i = $time->format("w"); $i < 7; $i++) {
+            $curDate = $startOfWeek->copy();
+            for ($i = $startOfWeek->format("w")-1; $i < 7; $i++) {
                 $nameOfDate[$i] = [
-                    "title" => $tmp[$i],
-                    "date" => $curDate->format("Y-m-d")
-                ];
-                $curDate->addDay();
-            }
-            for ($i = 0; $i < $time->format("w"); $i++) {
-                $nameOfDate[$i] = [
-                    "title" => $tmp[$i],
+                    "title" => $tmp[$curDate->format("w")],
                     "date" => $curDate->format("Y-m-d")
                 ];
                 $curDate->addDay();
@@ -221,13 +208,12 @@ class HomeController extends Controller
                 'schedule_share' => fn () => $scheduleShare,
                 'schedule_selected' => fn () => $schedule_selected,
                 'schedule_details' => fn () => $schedules,
-                'date' => $time->format("w")*1,
                 'nameOfDate' => $nameOfDate,
                 'maxADay' => $maxADay,
                 'timeOfEachClassPeriod' => fn () => $schedule_selected->timeOfEachClassPeriod,
                 'day' => $time->format("Y-m-d"),
-                'prev_day' => $time->copy()->subDay()->format("Y-m-d"),
-                'next_day' => $time->copy()->addDay()->format("Y-m-d"),
+                'prev_day' => $time->copy()->subDays(7)->format("Y-m-d"),
+                'next_day' => $time->copy()->addDays(7)->format("Y-m-d"),
                 'today' => date('Y-m-d'),
             ]);
         } else {
