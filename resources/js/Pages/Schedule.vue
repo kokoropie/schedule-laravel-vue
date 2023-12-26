@@ -1110,9 +1110,10 @@ const submitDetailDelete = () => {
                                     class="px-3 md:px-6 py-3 whitespace-nowrap text-left w-auto"
                                 >
                                     {{
-                                        schedule.dateOfWeek
+                                        schedule.dateOfWeek.length < 7 ? schedule.dateOfWeek
                                             .map((v) => dateOfWeekShort[v])
                                             .join(", ")
+                                            : 'All week'
                                     }}
                                 </td>
                                 <td
