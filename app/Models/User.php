@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -45,6 +46,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    protected $appends = [
+        'config'
+    ];
+
     public function teachers() {
         return $this->hasMany(Teacher::class, "user_id", "user_id");
     }
@@ -62,5 +67,22 @@ class User extends Authenticatable
         static::deleting(function (User $user) {
             $user->teachers()->delete();
         });
+    }
+
+    public function config(): Attribute
+    {
+        return new Attribute(
+            get: function ($value) {
+                $path = "upload/" . $this->user_id . "/config.json";
+                if (\Storage::disk('public')->exists($path)) {
+                    return json_decode(\Storage::disk('public')->get($path), true);
+                }
+                return [];
+            },
+            set: function ($value) {
+                $path = "upload/" . $this->user_id . "/config.json";
+                \Storage::disk('public')->put($path, json_encode($value));
+            }
+        );
     }
 }

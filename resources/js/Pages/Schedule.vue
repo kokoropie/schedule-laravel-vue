@@ -81,6 +81,10 @@ defineProps({
         type: Object,
         default: {},
     },
+    primary_schedule_id: {
+        type: Number,
+        default: 0,
+    }
 });
 
 const timeOfEachClassPeriodSFN = ref({});
@@ -424,6 +428,15 @@ const submitDetailDelete = () => {
                         >
                             Share
                         </button>
+                        <Link
+                            v-if="schedule_selected && schedule_selected.schedule_id != primary_schedule_id"
+                            class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 dark:text-gray-50 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 transition duration-150 ease-in-out"
+                            :href="route('schedule.primary', schedule_selected)"
+                            method="patch"
+                            as="button"
+                        >
+                            Set as Primary
+                        </Link>
                         <button
                             class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 dark:text-gray-50 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 transition duration-150 ease-in-out"
                             @click="showModalScheduleNew(schedule_selected)"

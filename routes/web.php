@@ -49,6 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('/subject', SubjectController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('/schedule', ScheduleController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::post('/schedule/{schedule:schedule_id}/share', [ScheduleController::class, 'share'])->name("schedule.share")->where('schedule', '[0-9]+');
+    Route::patch('/schedule/{schedule:schedule_id}/primary', [ScheduleController::class, 'primary'])->name("schedule.primary")->where('schedule', '[0-9]+');
     Route::resource('/schedule.detail', ScheduleDetailController::class)->only(['store', 'update', 'destroy']);
 
     Route::get('/{schedule:schedule_id}/{day?}', [HomeController::class, 'schedule'])->name('home.schedule')->where('schedule', '[0-9]+')->where('day', '[0-9]{4}-[0-9]{2}-[0-9]{2}');

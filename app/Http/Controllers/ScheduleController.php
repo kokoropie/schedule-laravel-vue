@@ -6,6 +6,7 @@ use App\Models\Schedule;
 use App\Models\Subject;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Http\Requests\Schedule\StoreRequest;
@@ -21,7 +22,13 @@ class ScheduleController extends Controller
         $this->authorize('viewAny', Schedule::class);
 
         if (auth()->user()->schedules()->count() > 0) {
-            return redirect(route('schedule.show', auth()->user()->schedules()->first()));
+            $config = auth()->user()->config;
+            if (auth()->user()->schedules()->where("schedule_id", $config["primary_schedule_id"] ?? 0)->doesntExist()) {
+                $schedule_selected = auth()->user()->schedules()->first();
+            } else {
+                $schedule_selected = auth()->user()->schedules()->where("schedule_id", $config["primary_schedule_id"])->first();
+            }
+            return redirect(route('schedule.show', $schedule_selected));
         }
         return Inertia::render("Schedule", [
             "schedules" => fn () => [],
@@ -83,7 +90,8 @@ class ScheduleController extends Controller
             'timeOfEachClassPeriod' => fn () => $schedule->timeOfEachClassPeriod,
             "sort" => $sort,
             "sort_by" => $sort_by,
-            "schedule_details" => fn () => $details->OrderBy($sort_by, $sort)->paginate($limit)->onEachSide(2)->withQueryString()
+            "schedule_details" => fn () => $details->OrderBy($sort_by, $sort)->paginate($limit)->onEachSide(2)->withQueryString(),
+            "primary_schedule_id" => fn () => auth()->user()->config["primary_schedule_id"] ?? 0,
         ]);
     }
 
@@ -130,6 +138,18 @@ class ScheduleController extends Controller
         } else {
             $schedule->share()->create([]);
         }
+
+        return redirect()->back();
+    }
+
+    public function primary(Schedule $schedule): RedirectResponse
+    {
+        $this->authorize('update', $schedule);
+
+        $user = auth()->user();
+        $config = $user->config;
+        $config["primary_schedule_id"] = $schedule->schedule_id;
+        $user->config = $config;
 
         return redirect()->back();
     }

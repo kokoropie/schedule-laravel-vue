@@ -7,6 +7,7 @@ use App\Models\ScheduleShare;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 use Carbon\Carbon;
@@ -15,7 +16,12 @@ class HomeController extends Controller
 {
     public function index(Request $request, string $day = ""): Response | RedirectResponse
     {
-        $schedule_selected = auth()->user()->schedules()->first();
+        $config = auth()->user()->config;
+        if (isset($config["primary_schedule_id"])) {
+            $schedule_selected = auth()->user()->schedules()->where("schedule_id", $config["primary_schedule_id"])->first();
+        } else {
+            $schedule_selected = auth()->user()->schedules()->first();
+        }
 
         return $this->schedule($request, $schedule_selected, $day);
     }
