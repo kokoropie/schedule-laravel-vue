@@ -113,7 +113,13 @@ class HomeController extends Controller
                 'prev_day' => $time->copy()->subDays(7)->format("Y-m-d"),
                 'next_day' => $time->copy()->addDays(7)->format("Y-m-d"),
                 'today' => date('Y-m-d'),
-                'firstSchedule' => fn () => auth()->user()->schedules()->first()->schedule_id
+                'firstSchedule' => function () {
+                    $config = auth()->user()->config;
+                    if (isset($config["primary_schedule_id"])) {
+                        return $config["primary_schedule_id"];
+                    }
+                    return auth()->user()->schedules()->first()->schedule_id;
+                }
             ]);
         } else {
             if (auth()->user()->schedules()->count()) {
