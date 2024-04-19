@@ -16,10 +16,16 @@ class HomeController extends Controller
 {
     public function index(Request $request, string $day = ""): Response | RedirectResponse
     {
-        $config = auth()->user()->config;
-        if (isset($config["primary_schedule_id"])) {
+        $config = collect(auth()->user()->config);
+        $schedule_selected = null;
+        if ($config->has("primary_schedule_id")) {
             $schedule_selected = auth()->user()->schedules()->where("schedule_id", $config["primary_schedule_id"])->first();
-        } else {
+            if (!$schedule_selected) {
+                $config->pull("primary_schedule_id");
+                auth()->user()->config = $config->toArray();
+            }
+        }
+        if (!$schedule_selected) {
             $schedule_selected = auth()->user()->schedules()->first();
         }
 
@@ -116,7 +122,9 @@ class HomeController extends Controller
                 'firstSchedule' => function () {
                     $config = auth()->user()->config;
                     if (isset($config["primary_schedule_id"])) {
-                        return $config["primary_schedule_id"];
+                        if (auth()->user()->schedules()->where("schedule_id", $config["primary_schedule_id"])->exists()) {
+                            return $config["primary_schedule_id"];
+                        }
                     }
                     return auth()->user()->schedules()->first()->schedule_id;
                 }
