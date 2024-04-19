@@ -25,6 +25,17 @@ class DataController extends Controller
                 time() . "." . $request->file("file")->extension(),
                 "public"
             );
+            if (!$path) {
+                return redirect(route('profile.edit'))->with("flash", [
+                    "swal" => [
+                        "data" => [
+                            "icon" => "error",
+                            "title" => "Import data failed",
+                            "confirmButtonText" => "OK"
+                        ]
+                    ]
+                ]);
+            }
             $file = Storage::drive("public")->get($path);
             Storage::drive("public")->delete($path);
             foreach ($user->schedules as $schedules) {
@@ -33,7 +44,7 @@ class DataController extends Controller
             foreach ($user->teachers as $teacher) {
                 $teacher->delete();
             }
-            $json = json_decode($file);
+            $json = json_decode($file, false);
             $schedules = [];
             foreach ($json->schedules as $schedule_id => $schedule) {
                 $schedules[$schedule_id] = $user->schedules()->create([
@@ -72,6 +83,16 @@ class DataController extends Controller
                     }
                 }
             }
+            if (isset($json->config)) {
+                $config = $json->config;
+                if (isset($config->primary_schedule_id)) {
+                    $config->primary_schedule_id = $schedules[$config->primary_schedule_id]->schedule_id;
+                }
+                $user->config = $config;
+            } else {
+                $user->config = [];
+            }
+
             return redirect(route('profile.edit'))->with("flash", [
                 "swal" => [
                     "data" => [
@@ -90,7 +111,8 @@ class DataController extends Controller
         if ($user) {
             $data = [
                 "schedules" => [],
-                "teachers" => []
+                "teachers" => [],
+                "config" => (object) []
             ];
             foreach ($user->schedules as $schedule) {
                 $data["schedules"][$schedule->schedule_id] = [
@@ -127,8 +149,10 @@ class DataController extends Controller
                     }
                 }
             }
+            $data["config"] = $user->config;
+            $name = parse_url(request()->root())['host'].'-'.now().'.json';
             return response($data, 200, [
-                'Content-Disposition' => 'attachment; filename="'.now().'.json"'
+                'Content-Disposition' => 'attachment; filename="'.$name.'"'
             ]);
         }
         return abort(403);
