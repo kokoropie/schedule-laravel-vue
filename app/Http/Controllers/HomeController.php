@@ -131,7 +131,7 @@ class HomeController extends Controller
             ]);
         } else {
             if (auth()->user()->schedules()->count()) {
-                return abort(404);
+                abort(404);
             } else {
                 return redirect(route('schedule.index'))->with("flash", [
                     "swal" => [
