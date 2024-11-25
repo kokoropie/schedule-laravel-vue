@@ -17,26 +17,22 @@ class ScheduleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): Response | RedirectResponse
+    public function index(Request $request): Response|RedirectResponse
     {
-        $this->authorize('viewAny', Schedule::class);
+        \Gate::authorize('viewAny', Schedule::class);
 
         if (auth()->user()->schedules()->count() > 0) {
             $config = auth()->user()->config;
-            if (auth()->user()->schedules()->where("schedule_id", $config["primary_schedule_id"] ?? 0)->doesntExist()) {
-                $schedule_selected = auth()->user()->schedules()->first();
-            } else {
-                $schedule_selected = auth()->user()->schedules()->where("schedule_id", $config["primary_schedule_id"])->first();
-            }
+            $schedule_selected = auth()->user()->schedules()->where("schedule_id", $config["primary_schedule_id"])->first() ?: auth()->user()->schedules()->first();
             return redirect(route('schedule.show', $schedule_selected));
         }
         return Inertia::render("Schedule", [
-            "schedules" => fn () => [],
-            "schedule_selected" => fn () => null,
-            "schedule_details" => fn () => [],
-            "subjects" => fn () => auth()->user()->subjects,
-            "numOfClassPeriodsPerDay" => fn () => 0,
-            'timeOfEachClassPeriod' => fn () => [],
+            "schedules" => fn() => [],
+            "schedule_selected" => fn() => null,
+            "schedule_details" => fn() => [],
+            "subjects" => fn() => auth()->user()->subjects,
+            "numOfClassPeriodsPerDay" => fn() => 0,
+            'timeOfEachClassPeriod' => fn() => [],
             "limit" => 0,
             "page" => 0,
             "total_page" => 0,
@@ -58,7 +54,7 @@ class ScheduleController extends Controller
      */
     public function store(StoreRequest $request): RedirectResponse
     {
-        $this->authorize('create', Schedule::class);
+        \Gate::authorize('create', Schedule::class);
 
         $validated = $request->validated();
 
@@ -72,26 +68,28 @@ class ScheduleController extends Controller
      */
     public function show(Request $request, Schedule $schedule): Response
     {
-        $this->authorize('view', $schedule);
+        \Gate::authorize('view', $schedule);
 
         $sort = strtoupper($request->get('sort', 'DESC'));
         $sort_by = strtolower($request->get('sort_by', 'schedule_detail_id'));
-        if ($sort_by == "dateofweek") $sort_by = "dateOfWeek";
+        if ($sort_by == "dateofweek")
+            $sort_by = "dateOfWeek";
         $details = $schedule->details();
         $limit = $request->get('limit', 10);
-        if ($limit <= 0) $limit = 10;
+        if ($limit <= 0)
+            $limit = 10;
 
         return Inertia::render("Schedule", [
-            "schedules" => fn () => auth()->user()->schedules,
-            "schedule_selected" => fn () => $schedule,
-            "schedule_share" => fn () => $schedule->share,
-            "subjects" => fn () => auth()->user()->subjects,
-            "numOfClassPeriodsPerDay" => fn () => $schedule->numOfClassPeriodsPerDay,
-            'timeOfEachClassPeriod' => fn () => $schedule->timeOfEachClassPeriod,
+            "schedules" => fn() => auth()->user()->schedules,
+            "schedule_selected" => fn() => $schedule,
+            "schedule_share" => fn() => $schedule->share,
+            "subjects" => fn() => auth()->user()->subjects,
+            "numOfClassPeriodsPerDay" => fn() => $schedule->numOfClassPeriodsPerDay,
+            'timeOfEachClassPeriod' => fn() => $schedule->timeOfEachClassPeriod,
             "sort" => $sort,
             "sort_by" => $sort_by,
-            "schedule_details" => fn () => $details->OrderBy($sort_by, $sort)->paginate($limit)->onEachSide(2)->withQueryString(),
-            "primary_schedule_id" => fn () => auth()->user()->config["primary_schedule_id"] ?? 0,
+            "schedule_details" => fn() => $details->OrderBy($sort_by, $sort)->paginate($limit)->onEachSide(2)->withQueryString(),
+            "primary_schedule_id" => fn() => auth()->user()->config["primary_schedule_id"] ?? 0,
         ]);
     }
 
@@ -108,7 +106,7 @@ class ScheduleController extends Controller
      */
     public function update(UpdateRequest $request, Schedule $schedule): RedirectResponse
     {
-        $this->authorize('update', $schedule);
+        \Gate::authorize('update', $schedule);
 
         $validated = $request->validated();
 
@@ -122,7 +120,7 @@ class ScheduleController extends Controller
      */
     public function destroy(Schedule $schedule): RedirectResponse
     {
-        $this->authorize('delete', $schedule);
+        \Gate::authorize('delete', $schedule);
 
         $schedule->delete();
 
@@ -131,7 +129,7 @@ class ScheduleController extends Controller
 
     public function share(Schedule $schedule): RedirectResponse
     {
-        $this->authorize('update', $schedule);
+        \Gate::authorize('update', $schedule);
 
         if ($schedule->share) {
             $schedule->share()->delete();
@@ -144,7 +142,7 @@ class ScheduleController extends Controller
 
     public function primary(Schedule $schedule): RedirectResponse
     {
-        $this->authorize('update', $schedule);
+        \Gate::authorize('update', $schedule);
 
         $user = auth()->user();
         $config = $user->config;

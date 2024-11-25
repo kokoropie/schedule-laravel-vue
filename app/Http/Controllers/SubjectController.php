@@ -17,15 +17,16 @@ class SubjectController extends Controller
      */
     public function index(Request $request): Response
     {
-        $this->authorize('viewAny', Subject::class);
+        \Gate::authorize('viewAny', Subject::class);
 
         $sort = strtoupper($request->get('sort', 'ASC'));
         $sort_by = strtolower($request->get('sort_by', 'subject_id'));
         $limit = $request->get('limit', 10);
-        if ($limit <= 0) $limit = 10;
+        if ($limit <= 0)
+            $limit = 10;
         return Inertia::render("Subject", [
-            "subjects" => fn () => auth()->user()->subjects()->OrderBy($sort_by, $sort)->paginate($limit)->onEachSide(2)->withQueryString(),
-            "teachers" => fn () => auth()->user()->teachers,
+            "subjects" => fn() => auth()->user()->subjects()->OrderBy($sort_by, $sort)->paginate($limit)->onEachSide(2)->withQueryString(),
+            "teachers" => fn() => auth()->user()->teachers,
             "sort" => $sort,
             "sort_by" => $sort_by,
         ]);
@@ -44,7 +45,7 @@ class SubjectController extends Controller
      */
     public function store(StoreRequest $request): RedirectResponse
     {
-        $this->authorize('create', Subject::class);
+        \Gate::authorize('create', Subject::class);
 
         $validated = $request->validated();
 
@@ -74,7 +75,7 @@ class SubjectController extends Controller
      */
     public function update(UpdateRequest $request, Subject $subject): RedirectResponse
     {
-        $this->authorize('update', $subject);
+        \Gate::authorize('update', $subject);
 
         $validated = $request->validated();
 
@@ -88,7 +89,7 @@ class SubjectController extends Controller
      */
     public function destroy(Subject $subject): RedirectResponse
     {
-        $this->authorize('delete', $subject);
+        \Gate::authorize('delete', $subject);
 
         auth()->user()->subjects()->where('subject_id', $subject->subject_id)->delete();
 

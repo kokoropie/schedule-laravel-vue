@@ -8,18 +8,7 @@ use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\ScheduleController;
 use Illuminate\Support\Facades\Route;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-
+use Inertia\Inertia;
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -40,5 +29,6 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/share/{schedule_share:schedule_share_id}/{day?}', [HomeController::class, 'share'])->name('share')->where('schedule_share', '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}')->where('day', '[0-9]{4}-[0-9]{2}-[0-9]{2}');;
+
 
 require __DIR__.'/auth.php';

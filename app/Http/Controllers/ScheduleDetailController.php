@@ -31,12 +31,12 @@ class ScheduleDetailController extends Controller
      */
     public function store(StoreRequest $request, Schedule $schedule)
     {
-        $this->authorize("create", [$schedule, ScheduleDetail::class]);
+        \Gate::authorize("create", [$schedule, ScheduleDetail::class]);
 
         $validated = $request->validated();
 
         if ($validated["from"] === $validated["to"]) {
-            $validated["dateOfWeek"] = [date("w", strtotime($validated["from"]))+1];
+            $validated["dateOfWeek"] = [date("w", strtotime($validated["from"])) + 1];
         }
 
         $schedule->details()->create($validated);
@@ -65,12 +65,12 @@ class ScheduleDetailController extends Controller
      */
     public function update(UpdateRequest $request, Schedule $schedule, ScheduleDetail $detail)
     {
-        $this->authorize("update", [$schedule, $detail]);
+        \Gate::authorize("update", [$schedule, $detail]);
 
         $validated = $request->validated();
 
         if ($validated["from"] === $validated["to"]) {
-            $validated["dateOfWeek"] = [date("w", strtotime($validated["from"]))+1];
+            $validated["dateOfWeek"] = [date("w", strtotime($validated["from"])) + 1];
         }
 
         $detail->update($validated);
@@ -83,7 +83,7 @@ class ScheduleDetailController extends Controller
      */
     public function destroy(Schedule $schedule, ScheduleDetail $detail)
     {
-        $this->authorize("delete", [$schedule, $detail]);
+        \Gate::authorize("delete", [$schedule, $detail]);
 
         $detail->delete();
         return redirect()->back();

@@ -17,14 +17,15 @@ class TeacherController extends Controller
      */
     public function index(Request $request): Response
     {
-        $this->authorize('viewAny', Teacher::class);
+        \Gate::authorize('viewAny', Teacher::class);
 
         $sort = strtoupper($request->get('sort', 'ASC'));
         $sort_by = strtolower($request->get('sort_by', 'teacher_id'));
         $limit = $request->get('limit', 10);
-        if ($limit <= 0) $limit = 10;
+        if ($limit <= 0)
+            $limit = 10;
         return Inertia::render("Teacher", [
-            "teachers" => fn () => auth()->user()->teachers()->OrderBy($sort_by, $sort)->withCount(['subjects'])->paginate($limit)->onEachSide(2)->withQueryString(),
+            "teachers" => fn() => auth()->user()->teachers()->OrderBy($sort_by, $sort)->withCount(['subjects'])->paginate($limit)->onEachSide(2)->withQueryString(),
             "sort" => $sort,
             "sort_by" => $sort_by,
         ]);
@@ -43,7 +44,7 @@ class TeacherController extends Controller
      */
     public function store(StoreRequest $request): RedirectResponse
     {
-        $this->authorize('create', Teacher::class);
+        \Gate::authorize('create', Teacher::class);
 
         $validated = $request->validated();
 
@@ -73,7 +74,7 @@ class TeacherController extends Controller
      */
     public function update(UpdateRequest $request, Teacher $teacher): RedirectResponse
     {
-        $this->authorize('update', $teacher);
+        \Gate::authorize('update', $teacher);
 
         $validated = $request->validated();
 
@@ -87,7 +88,7 @@ class TeacherController extends Controller
      */
     public function destroy(Teacher $teacher): RedirectResponse
     {
-        $this->authorize('delete', $teacher);
+        \Gate::authorize('delete', $teacher);
 
         $teacher->delete();
 

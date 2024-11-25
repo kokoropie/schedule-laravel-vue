@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -71,17 +71,17 @@ class User extends Authenticatable
 
     public function config(): Attribute
     {
-        return new Attribute(
+        return Attribute::make(
             get: function ($value) {
-                $path = "upload/" . $this->user_id . "/config.json";
-                if (\Storage::disk('public')->exists($path)) {
-                    return json_decode(\Storage::disk('public')->get($path), true);
+                $path = "upload/" . $this->attributes["user_id"] . "/config.json";
+                if (\Storage::exists($path)) {
+                    return json_decode(\Storage::get($path), true);
                 }
                 return [];
             },
             set: function ($value) {
-                $path = "upload/" . $this->user_id . "/config.json";
-                \Storage::disk('public')->put($path, json_encode($value));
+                $path = "upload/" . $this->attributes["user_id"] . "/config.json";
+                \Storage::put($path, json_encode($value));
             }
         );
     }
