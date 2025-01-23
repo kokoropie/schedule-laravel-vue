@@ -3,6 +3,13 @@ import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
+    css: {
+        preprocessorOptions: {
+            scss: {
+                api: 'modern-compiler'
+            }
+        }
+    },
     plugins: [
         laravel({
             input: 'resources/js/app.js',
@@ -29,27 +36,7 @@ export default defineConfig({
                     }
 
                     return 'images/[hash:16][extname]';
-                },
-                // manualChunks(id) {
-                //     if (id.includes('flowbite')) {
-                //         return 'flowbite';
-                //     }
-                //     if (id.includes('axios')) {
-                //         return 'axios';
-                //     }
-                //     if (id.includes('iconify')) {
-                //         return 'iconify';
-                //     }
-                //     if (id.includes('apexcharts')) {
-                //         return 'apexcharts';
-                //     }
-                //     if (id.includes('vue-') || id.includes('vue3-')) {
-                //         return 'vue3';
-                //     }
-                //     if (id.includes('node_modules')) {
-                //         return 'vendor';
-                //     }
-                // }
+                }
             }
         }
     }
