@@ -1,0 +1,29 @@
+name: NPM Checks
+
+on:
+  pull_request:
+    # Optional: You can restrict this to specific target branches
+    branches: [ "main", "master", "webapp" ]
+
+jobs:
+  build:
+    name: Build and Check
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Check out the repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22' # Change this to your project's Node version
+          cache: 'npm'       # Automatically caches node_modules for faster runs
+
+      # 3. Install NPM dependencies
+      - name: Install NPM dependencies
+        # npm ci is highly recommended in CI environments over npm install
+        # as it cleanly installs exact versions from package-lock.json
+        run: npm ci
