@@ -1,0 +1,41 @@
+name: Composer Checks
+
+on:
+  pull_request:
+    # Optional: You can restrict this to specific target branches
+    branches: [ "main", "master", "webapp", "services" ]
+
+jobs:
+  build:
+    name: Build and Check
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Check out the repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Setup PHP environment
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3' # Change this to your project's PHP version
+          tools: composer
+          # extensions: mbstring, xml, ctype, iconv, etc. (Add if your project needs specific extensions)
+
+      # 4. Cache Composer dependencies to speed up subsequent runs
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      # 5. Install PHP dependencies
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
